@@ -29,7 +29,7 @@ function RegisterPage() {
   const submit = () => {
     const res = register({ firstname: f.firstname.trim(), lastname: f.lastname.trim(), email: f.email.trim(), password: f.password });
     if (!res.ok) return setError(res.error ?? "สมัครไม่สำเร็จ");
-    navigate({ to: "/student/dashboard" });
+    navigate({ to: "/student/dashboard" as never });
   };
 
   return (

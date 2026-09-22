@@ -32,7 +32,7 @@ function LoginPage() {
   const submit = () => {
     const acc = login(email.trim(), password);
     if (!acc) return setError("อีเมลหรือรหัสผ่านไม่ถูกต้อง");
-    navigate({ to: `/${acc.role}/dashboard` });
+    navigate({ to: `/${acc.role}/dashboard` as never });
   };
 
   return (
