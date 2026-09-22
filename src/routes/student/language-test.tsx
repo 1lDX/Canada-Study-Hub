@@ -1,0 +1,92 @@
+import { createFileRoute } from "@tanstack/react-router";
+import { useState } from "react";
+import { DashboardLayout, studentNav } from "@/components/layouts";
+import { Badge, Button, Card, Field, FileInput, inputClass } from "@/components/ui-kit";
+import { LEVELS, TEST_TYPES } from "@/lib/data";
+import { useStore } from "@/lib/store";
+
+export const Route = createFileRoute("/student/language-test")({
+  head: () => ({
+    meta: [
+      { title: "ผลสอบภาษา | MapleLeaf Education" },
+      { name: "description", content: "บันทึกประเภทการสอบ คะแนน ระดับภาษา และอัปโหลดผลสอบเพื่อปลดล็อกการสมัครหลักสูตร" },
+      { property: "og:title", content: "ผลสอบภาษา | MapleLeaf Education" },
+      { property: "og:description", content: "ระบบจะเทียบระดับภาษาของคุณกับที่หลักสูตรกำหนดให้อัตโนมัติ" },
+    ],
+  }),
+  component: LanguageTestPage,
+});
+
+function LanguageTestPage() {
+  const { myTest, saveTest } = useStore();
+  const cur = myTest();
+  const [f, setF] = useState({
+    testType: cur?.testType ?? "",
+    score: cur?.score ?? "",
+    level: cur?.level ?? "",
+    testDate: cur?.testDate ?? "",
+    expiryDate: cur?.expiryDate ?? "",
+    fileName: cur?.fileName ?? "",
+  });
+  const [saved, setSaved] = useState(false);
+  const set = (k: string, v: string) => setF({ ...f, [k]: v });
+  const valid = f.testType && f.score && f.level && f.testDate && f.fileName;
+
+  return (
+    <DashboardLayout nav={studentNav} title="Language Test">
+      <Card className="max-w-3xl">
+        {cur ? (
+          <Badge tone="success">
+            มีผลสอบในระบบแล้ว: {cur.testType} {cur.score} (ระดับ {cur.level})
+          </Badge>
+        ) : (
+          <Badge tone="warning">ยังไม่มีผลสอบภาษา — จะยังสมัครหลักสูตรไม่ได้</Badge>
+        )}
+        <div className="mt-5 grid gap-3 sm:grid-cols-2">
+          <Field label="ประเภทการสอบ">
+            <select className={inputClass} value={f.testType} onChange={(e) => set("testType", e.target.value)}>
+              <option value="">เลือกประเภท</option>
+              {TEST_TYPES.map((t) => (
+                <option key={t}>{t}</option>
+              ))}
+            </select>
+          </Field>
+          <Field label="คะแนน">
+            <input className={inputClass} maxLength={10} value={f.score} onChange={(e) => set("score", e.target.value)} />
+          </Field>
+          <Field label="ระดับภาษา (CEFR)">
+            <select className={inputClass} value={f.level} onChange={(e) => set("level", e.target.value)}>
+              <option value="">เลือกระดับ</option>
+              {LEVELS.map((l) => (
+                <option key={l}>{l}</option>
+              ))}
+            </select>
+          </Field>
+          <Field label="วันที่สอบ">
+            <input type="date" className={inputClass} value={f.testDate} onChange={(e) => set("testDate", e.target.value)} />
+          </Field>
+          <Field label="วันหมดอายุ (ถ้ามี)">
+            <input type="date" className={inputClass} value={f.expiryDate} onChange={(e) => set("expiryDate", e.target.value)} />
+          </Field>
+        </div>
+        <div className="mt-3">
+          <Field label="อัปโหลดผลสอบ" hint="PDF หรือรูปภาพ ไม่เกิน 8 MB">
+            <FileInput onFile={(n) => set("fileName", n)} value={f.fileName} />
+          </Field>
+        </div>
+        <div className="mt-4 flex items-center gap-3">
+          <Button
+            disabled={!valid}
+            onClick={() => {
+              saveTest(f.expiryDate ? f : { ...f, expiryDate: undefined });
+              setSaved(true);
+            }}
+          >
+            บันทึกผลสอบภาษา
+          </Button>
+          {saved && <Badge tone="success">บันทึกแล้ว — ระบบอัปเดตหลักสูตรที่สมัครได้ให้คุณแล้ว</Badge>}
+        </div>
+      </Card>
+    </DashboardLayout>
+  );
+}
