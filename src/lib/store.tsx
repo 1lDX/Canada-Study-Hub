@@ -180,9 +180,10 @@ export function StoreProvider({ children }: { children: ReactNode }) {
       return d;
     });
 
-  const setStatus = (d: DB, app: Application, status: Status, by: string, note?: string) => {
+  const setStatus = (_d: DB, app: Application, status: Status, by: string, note?: string) => {
     app.status = status;
-    app.history.push({ status, at: new Date().toISOString(), by, note });
+    const entry = { status, at: new Date().toISOString(), by };
+    app.history.push(note ? { ...entry, note } : entry);
   };
 
   const value: Ctx = useMemo(() => {
