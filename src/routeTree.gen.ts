@@ -11,17 +11,25 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AboutRouteImport } from './routes/about'
+import { Route as AgentRouteRouteImport } from './routes/agent/route'
 import { Route as ContactRouteImport } from './routes/contact'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as RegisterRouteImport } from './routes/register'
 import { Route as StudentRouteRouteImport } from './routes/student/route'
+import { Route as AgentDashboardRouteImport } from './routes/agent/dashboard'
 import { Route as CoursesIndexRouteImport } from './routes/courses/index'
 import { Route as CoursesCourseIdRouteImport } from './routes/courses/$courseId'
 import { Route as StudentCoursesRouteImport } from './routes/student/courses'
 import { Route as StudentDashboardRouteImport } from './routes/student/dashboard'
+import { Route as StudentDocumentsRouteImport } from './routes/student/documents'
 import { Route as StudentInterestsRouteImport } from './routes/student/interests'
 import { Route as StudentLanguageTestRouteImport } from './routes/student/language-test'
+import { Route as StudentNotificationsRouteImport } from './routes/student/notifications'
+import { Route as StudentOffersRouteImport } from './routes/student/offers'
+import { Route as StudentPaymentsRouteImport } from './routes/student/payments'
 import { Route as StudentProfileRouteImport } from './routes/student/profile'
+import { Route as AgentApplicationsIndexRouteImport } from './routes/agent/applications/index'
+import { Route as AgentApplicationsAppIdRouteImport } from './routes/agent/applications/$appId'
 import { Route as StudentApplicationsIndexRouteImport } from './routes/student/applications/index'
 import { Route as StudentApplicationsAppIdRouteImport } from './routes/student/applications/$appId'
 import { Route as StudentApplyCourseIdRouteImport } from './routes/student/apply/$courseId'
@@ -34,6 +42,11 @@ const IndexRoute = IndexRouteImport.update({
 const AboutRoute = AboutRouteImport.update({
   id: '/about',
   path: '/about',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AgentRouteRoute = AgentRouteRouteImport.update({
+  id: '/agent',
+  path: '/agent',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ContactRoute = ContactRouteImport.update({
@@ -56,6 +69,11 @@ const StudentRouteRoute = StudentRouteRouteImport.update({
   path: '/student',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AgentDashboardRoute = AgentDashboardRouteImport.update({
+  id: '/dashboard',
+  path: '/dashboard',
+  getParentRoute: () => AgentRouteRoute,
+} as any)
 const CoursesIndexRoute = CoursesIndexRouteImport.update({
   id: '/courses/',
   path: '/courses/',
@@ -76,6 +94,11 @@ const StudentDashboardRoute = StudentDashboardRouteImport.update({
   path: '/dashboard',
   getParentRoute: () => StudentRouteRoute,
 } as any)
+const StudentDocumentsRoute = StudentDocumentsRouteImport.update({
+  id: '/documents',
+  path: '/documents',
+  getParentRoute: () => StudentRouteRoute,
+} as any)
 const StudentInterestsRoute = StudentInterestsRouteImport.update({
   id: '/interests',
   path: '/interests',
@@ -86,10 +109,35 @@ const StudentLanguageTestRoute = StudentLanguageTestRouteImport.update({
   path: '/language-test',
   getParentRoute: () => StudentRouteRoute,
 } as any)
+const StudentNotificationsRoute = StudentNotificationsRouteImport.update({
+  id: '/notifications',
+  path: '/notifications',
+  getParentRoute: () => StudentRouteRoute,
+} as any)
+const StudentOffersRoute = StudentOffersRouteImport.update({
+  id: '/offers',
+  path: '/offers',
+  getParentRoute: () => StudentRouteRoute,
+} as any)
+const StudentPaymentsRoute = StudentPaymentsRouteImport.update({
+  id: '/payments',
+  path: '/payments',
+  getParentRoute: () => StudentRouteRoute,
+} as any)
 const StudentProfileRoute = StudentProfileRouteImport.update({
   id: '/profile',
   path: '/profile',
   getParentRoute: () => StudentRouteRoute,
+} as any)
+const AgentApplicationsIndexRoute = AgentApplicationsIndexRouteImport.update({
+  id: '/applications/',
+  path: '/applications/',
+  getParentRoute: () => AgentRouteRoute,
+} as any)
+const AgentApplicationsAppIdRoute = AgentApplicationsAppIdRouteImport.update({
+  id: '/applications/$appId',
+  path: '/applications/$appId',
+  getParentRoute: () => AgentRouteRoute,
 } as any)
 const StudentApplicationsIndexRoute =
   StudentApplicationsIndexRouteImport.update({
@@ -111,118 +159,167 @@ const StudentApplyCourseIdRoute = StudentApplyCourseIdRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/agent': typeof AgentRouteRouteWithChildren
   '/student': typeof StudentRouteRouteWithChildren
   '/about': typeof AboutRoute
   '/contact': typeof ContactRoute
   '/login': typeof LoginRoute
   '/register': typeof RegisterRoute
+  '/agent/dashboard': typeof AgentDashboardRoute
   '/courses/$courseId': typeof CoursesCourseIdRoute
   '/student/courses': typeof StudentCoursesRoute
   '/student/dashboard': typeof StudentDashboardRoute
+  '/student/documents': typeof StudentDocumentsRoute
   '/student/interests': typeof StudentInterestsRoute
   '/student/language-test': typeof StudentLanguageTestRoute
+  '/student/notifications': typeof StudentNotificationsRoute
+  '/student/offers': typeof StudentOffersRoute
+  '/student/payments': typeof StudentPaymentsRoute
   '/student/profile': typeof StudentProfileRoute
   '/courses/': typeof CoursesIndexRoute
+  '/agent/applications/$appId': typeof AgentApplicationsAppIdRoute
   '/student/applications/$appId': typeof StudentApplicationsAppIdRoute
   '/student/apply/$courseId': typeof StudentApplyCourseIdRoute
+  '/agent/applications/': typeof AgentApplicationsIndexRoute
   '/student/applications/': typeof StudentApplicationsIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/agent': typeof AgentRouteRouteWithChildren
   '/student': typeof StudentRouteRouteWithChildren
   '/about': typeof AboutRoute
   '/contact': typeof ContactRoute
   '/login': typeof LoginRoute
   '/register': typeof RegisterRoute
+  '/agent/dashboard': typeof AgentDashboardRoute
   '/courses/$courseId': typeof CoursesCourseIdRoute
   '/student/courses': typeof StudentCoursesRoute
   '/student/dashboard': typeof StudentDashboardRoute
+  '/student/documents': typeof StudentDocumentsRoute
   '/student/interests': typeof StudentInterestsRoute
   '/student/language-test': typeof StudentLanguageTestRoute
+  '/student/notifications': typeof StudentNotificationsRoute
+  '/student/offers': typeof StudentOffersRoute
+  '/student/payments': typeof StudentPaymentsRoute
   '/student/profile': typeof StudentProfileRoute
   '/courses': typeof CoursesIndexRoute
+  '/agent/applications/$appId': typeof AgentApplicationsAppIdRoute
   '/student/applications/$appId': typeof StudentApplicationsAppIdRoute
   '/student/apply/$courseId': typeof StudentApplyCourseIdRoute
+  '/agent/applications': typeof AgentApplicationsIndexRoute
   '/student/applications': typeof StudentApplicationsIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/agent': typeof AgentRouteRouteWithChildren
   '/student': typeof StudentRouteRouteWithChildren
   '/about': typeof AboutRoute
   '/contact': typeof ContactRoute
   '/login': typeof LoginRoute
   '/register': typeof RegisterRoute
+  '/agent/dashboard': typeof AgentDashboardRoute
   '/courses/$courseId': typeof CoursesCourseIdRoute
   '/student/courses': typeof StudentCoursesRoute
   '/student/dashboard': typeof StudentDashboardRoute
+  '/student/documents': typeof StudentDocumentsRoute
   '/student/interests': typeof StudentInterestsRoute
   '/student/language-test': typeof StudentLanguageTestRoute
+  '/student/notifications': typeof StudentNotificationsRoute
+  '/student/offers': typeof StudentOffersRoute
+  '/student/payments': typeof StudentPaymentsRoute
   '/student/profile': typeof StudentProfileRoute
   '/courses/': typeof CoursesIndexRoute
+  '/agent/applications/$appId': typeof AgentApplicationsAppIdRoute
   '/student/applications/$appId': typeof StudentApplicationsAppIdRoute
   '/student/apply/$courseId': typeof StudentApplyCourseIdRoute
+  '/agent/applications/': typeof AgentApplicationsIndexRoute
   '/student/applications/': typeof StudentApplicationsIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/agent'
     | '/student'
     | '/about'
     | '/contact'
     | '/login'
     | '/register'
+    | '/agent/dashboard'
     | '/courses/$courseId'
     | '/student/courses'
     | '/student/dashboard'
+    | '/student/documents'
     | '/student/interests'
     | '/student/language-test'
+    | '/student/notifications'
+    | '/student/offers'
+    | '/student/payments'
     | '/student/profile'
     | '/courses/'
+    | '/agent/applications/$appId'
     | '/student/applications/$appId'
     | '/student/apply/$courseId'
+    | '/agent/applications/'
     | '/student/applications/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/agent'
     | '/student'
     | '/about'
     | '/contact'
     | '/login'
     | '/register'
+    | '/agent/dashboard'
     | '/courses/$courseId'
     | '/student/courses'
     | '/student/dashboard'
+    | '/student/documents'
     | '/student/interests'
     | '/student/language-test'
+    | '/student/notifications'
+    | '/student/offers'
+    | '/student/payments'
     | '/student/profile'
     | '/courses'
+    | '/agent/applications/$appId'
     | '/student/applications/$appId'
     | '/student/apply/$courseId'
+    | '/agent/applications'
     | '/student/applications'
   id:
     | '__root__'
     | '/'
+    | '/agent'
     | '/student'
     | '/about'
     | '/contact'
     | '/login'
     | '/register'
+    | '/agent/dashboard'
     | '/courses/$courseId'
     | '/student/courses'
     | '/student/dashboard'
+    | '/student/documents'
     | '/student/interests'
     | '/student/language-test'
+    | '/student/notifications'
+    | '/student/offers'
+    | '/student/payments'
     | '/student/profile'
     | '/courses/'
+    | '/agent/applications/$appId'
     | '/student/applications/$appId'
     | '/student/apply/$courseId'
+    | '/agent/applications/'
     | '/student/applications/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AgentRouteRoute: typeof AgentRouteRouteWithChildren
   StudentRouteRoute: typeof StudentRouteRouteWithChildren
   AboutRoute: typeof AboutRoute
   ContactRoute: typeof ContactRoute
@@ -246,6 +343,13 @@ declare module '@tanstack/react-router' {
       path: '/about'
       fullPath: '/about'
       preLoaderRoute: typeof AboutRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/agent': {
+      id: '/agent'
+      path: '/agent'
+      fullPath: '/agent'
+      preLoaderRoute: typeof AgentRouteRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/contact': {
@@ -276,6 +380,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof StudentRouteRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/agent/dashboard': {
+      id: '/agent/dashboard'
+      path: '/dashboard'
+      fullPath: '/agent/dashboard'
+      preLoaderRoute: typeof AgentDashboardRouteImport
+      parentRoute: typeof AgentRouteRoute
+    }
     '/courses/': {
       id: '/courses/'
       path: '/courses'
@@ -304,6 +415,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof StudentDashboardRouteImport
       parentRoute: typeof StudentRouteRoute
     }
+    '/student/documents': {
+      id: '/student/documents'
+      path: '/documents'
+      fullPath: '/student/documents'
+      preLoaderRoute: typeof StudentDocumentsRouteImport
+      parentRoute: typeof StudentRouteRoute
+    }
     '/student/interests': {
       id: '/student/interests'
       path: '/interests'
@@ -318,12 +436,47 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof StudentLanguageTestRouteImport
       parentRoute: typeof StudentRouteRoute
     }
+    '/student/notifications': {
+      id: '/student/notifications'
+      path: '/notifications'
+      fullPath: '/student/notifications'
+      preLoaderRoute: typeof StudentNotificationsRouteImport
+      parentRoute: typeof StudentRouteRoute
+    }
+    '/student/offers': {
+      id: '/student/offers'
+      path: '/offers'
+      fullPath: '/student/offers'
+      preLoaderRoute: typeof StudentOffersRouteImport
+      parentRoute: typeof StudentRouteRoute
+    }
+    '/student/payments': {
+      id: '/student/payments'
+      path: '/payments'
+      fullPath: '/student/payments'
+      preLoaderRoute: typeof StudentPaymentsRouteImport
+      parentRoute: typeof StudentRouteRoute
+    }
     '/student/profile': {
       id: '/student/profile'
       path: '/profile'
       fullPath: '/student/profile'
       preLoaderRoute: typeof StudentProfileRouteImport
       parentRoute: typeof StudentRouteRoute
+    }
+    '/agent/applications/': {
+      id: '/agent/applications/'
+      path: '/applications'
+      fullPath: '/agent/applications/'
+      preLoaderRoute: typeof AgentApplicationsIndexRouteImport
+      parentRoute: typeof AgentRouteRoute
+    }
+    '/agent/applications/$appId': {
+      id: '/agent/applications/$appId'
+      path: '/applications/$appId'
+      fullPath: '/agent/applications/$appId'
+      preLoaderRoute: typeof AgentApplicationsAppIdRouteImport
+      parentRoute: typeof AgentRouteRoute
     }
     '/student/applications/': {
       id: '/student/applications/'
@@ -349,11 +502,31 @@ declare module '@tanstack/react-router' {
   }
 }
 
+interface AgentRouteRouteChildren {
+  AgentDashboardRoute: typeof AgentDashboardRoute
+  AgentApplicationsAppIdRoute: typeof AgentApplicationsAppIdRoute
+  AgentApplicationsIndexRoute: typeof AgentApplicationsIndexRoute
+}
+
+const AgentRouteRouteChildren: AgentRouteRouteChildren = {
+  AgentDashboardRoute: AgentDashboardRoute,
+  AgentApplicationsAppIdRoute: AgentApplicationsAppIdRoute,
+  AgentApplicationsIndexRoute: AgentApplicationsIndexRoute,
+}
+
+const AgentRouteRouteWithChildren = AgentRouteRoute._addFileChildren(
+  AgentRouteRouteChildren,
+)
+
 interface StudentRouteRouteChildren {
   StudentCoursesRoute: typeof StudentCoursesRoute
   StudentDashboardRoute: typeof StudentDashboardRoute
+  StudentDocumentsRoute: typeof StudentDocumentsRoute
   StudentInterestsRoute: typeof StudentInterestsRoute
   StudentLanguageTestRoute: typeof StudentLanguageTestRoute
+  StudentNotificationsRoute: typeof StudentNotificationsRoute
+  StudentOffersRoute: typeof StudentOffersRoute
+  StudentPaymentsRoute: typeof StudentPaymentsRoute
   StudentProfileRoute: typeof StudentProfileRoute
   StudentApplicationsAppIdRoute: typeof StudentApplicationsAppIdRoute
   StudentApplyCourseIdRoute: typeof StudentApplyCourseIdRoute
@@ -363,8 +536,12 @@ interface StudentRouteRouteChildren {
 const StudentRouteRouteChildren: StudentRouteRouteChildren = {
   StudentCoursesRoute: StudentCoursesRoute,
   StudentDashboardRoute: StudentDashboardRoute,
+  StudentDocumentsRoute: StudentDocumentsRoute,
   StudentInterestsRoute: StudentInterestsRoute,
   StudentLanguageTestRoute: StudentLanguageTestRoute,
+  StudentNotificationsRoute: StudentNotificationsRoute,
+  StudentOffersRoute: StudentOffersRoute,
+  StudentPaymentsRoute: StudentPaymentsRoute,
   StudentProfileRoute: StudentProfileRoute,
   StudentApplicationsAppIdRoute: StudentApplicationsAppIdRoute,
   StudentApplyCourseIdRoute: StudentApplyCourseIdRoute,
@@ -377,6 +554,7 @@ const StudentRouteRouteWithChildren = StudentRouteRoute._addFileChildren(
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AgentRouteRoute: AgentRouteRouteWithChildren,
   StudentRouteRoute: StudentRouteRouteWithChildren,
   AboutRoute: AboutRoute,
   ContactRoute: ContactRoute,
