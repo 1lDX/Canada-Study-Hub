@@ -1,3 +1,4 @@
+import { ALink } from "@/components/link";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import hero from "@/assets/hero-canada.jpg";
 import { PublicLayout } from "@/components/layouts";
@@ -111,9 +112,9 @@ function Home() {
                   <Badge>{money(c.tuition)}</Badge>
                   <Badge tone="info">ต้องการ {c.level}</Badge>
                 </div>
-                <Link to={`/courses/${c.id}`} className="mt-4 inline-block text-sm font-medium text-primary hover:underline">
+                <ALink to={`/courses/${c.id}`} className="mt-4 inline-block text-sm font-medium text-primary hover:underline">
                   ดูรายละเอียด →
-                </Link>
+                </ALink>
               </Card>
             ))}
           </div>
@@ -127,12 +128,12 @@ function Home() {
               <h2 className="text-2xl font-semibold">พร้อมเริ่มต้นเส้นทางเรียนต่อแคนาดาแล้วหรือยัง</h2>
               <p className="mt-1 text-sm opacity-90">สมัครสมาชิกฟรี ใช้เวลาไม่ถึง 2 นาที</p>
             </div>
-            <Link
+            <ALink
               to="/register"
               className="rounded-lg bg-card px-5 py-2.5 text-sm font-semibold text-primary hover:opacity-90"
             >
               สมัครสมาชิก
-            </Link>
+            </ALink>
           </div>
         </Card>
       </section>

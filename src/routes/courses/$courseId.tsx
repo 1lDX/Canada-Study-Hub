@@ -1,3 +1,4 @@
+import { ALink } from "@/components/link";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { PublicLayout } from "@/components/layouts";
 import { Row } from "@/components/application-views";
@@ -37,9 +38,9 @@ function CourseDetail() {
   return (
     <PublicLayout>
       <div className="container-page py-10">
-        <Link to="/courses" className="text-sm text-primary hover:underline">
+        <ALink to="/courses" className="text-sm text-primary hover:underline">
           ← กลับไปหน้าหลักสูตร
-        </Link>
+        </ALink>
         <div className="mt-4 grid gap-6 lg:grid-cols-3">
           <div className="lg:col-span-2">
             <SectionTitle title={course.name} desc={`${course.college} · ${course.city}`} />
@@ -61,12 +62,12 @@ function CourseDetail() {
               {!me && (
                 <>
                   <p className="mt-2 text-sm text-muted-foreground">เข้าสู่ระบบเพื่อตรวจสอบว่าคุณสมัครหลักสูตรนี้ได้หรือไม่</p>
-                  <Link
+                  <ALink
                     to="/login"
                     className="mt-3 inline-flex rounded-lg bg-primary px-4 py-2 text-sm font-medium text-primary-foreground"
                   >
                     Login
-                  </Link>
+                  </ALink>
                 </>
               )}
               {me?.role === "student" && (
@@ -79,19 +80,19 @@ function CourseDetail() {
                   )}
                   {eligible ? <Badge tone="success">สามารถสมัครได้</Badge> : <Badge tone="danger">ยังไม่สามารถสมัครได้</Badge>}
                   {eligible ? (
-                    <Link
+                    <ALink
                       to={`/student/apply/${course.id}`}
                       className="mt-2 inline-flex rounded-lg bg-primary px-4 py-2 text-sm font-medium text-primary-foreground"
                     >
                       สมัครหลักสูตรนี้
-                    </Link>
+                    </ALink>
                   ) : (
-                    <Link
+                    <ALink
                       to="/student/language-test"
                       className="mt-2 inline-flex rounded-lg border border-border px-4 py-2 text-sm font-medium"
                     >
                       กรอก/อัปเดตผลสอบภาษา
-                    </Link>
+                    </ALink>
                   )}
                 </div>
               )}

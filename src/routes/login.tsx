@@ -16,7 +16,7 @@ export const Route = createFileRoute("/login")({
   component: LoginPage,
 });
 
-const demos = [
+const demos: [string, string][] = [
   ["student@demo.com", "Student"],
   ["agent@demo.com", "Agent"],
   ["college@demo.com", "College"],

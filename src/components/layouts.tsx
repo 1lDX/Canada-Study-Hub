@@ -1,3 +1,4 @@
+import { ALink } from "@/components/link";
 import { Link, useNavigate, useRouterState } from "@tanstack/react-router";
 import { useState, type ReactNode } from "react";
 import { cn } from "@/lib/utils";
@@ -6,7 +7,7 @@ import { Badge } from "./ui-kit";
 
 function Logo() {
   return (
-    <Link to="/" className="flex items-center gap-2">
+    <ALink to="/" className="flex items-center gap-2">
       <span className="grid size-9 place-items-center rounded-lg bg-primary text-lg font-bold text-primary-foreground">
         M
       </span>
@@ -14,7 +15,7 @@ function Logo() {
         <span className="block font-display text-base font-semibold">MapleLeaf Education</span>
         <span className="block text-[11px] text-muted-foreground">Study in Canada Agency</span>
       </span>
-    </Link>
+    </ALink>
   );
 }
 
@@ -38,21 +39,21 @@ export function PublicLayout({ children }: { children: ReactNode }) {
           <Logo />
           <nav className="hidden items-center gap-1 md:flex">
             {publicNav.map((n) => (
-              <Link
+              <ALink
                 key={n.to}
                 to={n.to}
                 className="rounded-lg px-3 py-2 text-sm font-medium text-muted-foreground transition hover:bg-accent hover:text-accent-foreground"
               >
                 {n.label}
-              </Link>
+              </ALink>
             ))}
           </nav>
           <div className="hidden items-center gap-2 md:flex">
             {me ? (
               <>
-                <Link to={home} className="rounded-lg px-3 py-2 text-sm font-medium hover:bg-accent">
+                <ALink to={home} className="rounded-lg px-3 py-2 text-sm font-medium hover:bg-accent">
                   Dashboard
-                </Link>
+                </ALink>
                 <button
                   onClick={() => {
                     logout();
@@ -65,15 +66,15 @@ export function PublicLayout({ children }: { children: ReactNode }) {
               </>
             ) : (
               <>
-                <Link to="/login" className="rounded-lg px-3 py-2 text-sm font-medium hover:bg-accent">
+                <ALink to="/login" className="rounded-lg px-3 py-2 text-sm font-medium hover:bg-accent">
                   Login
-                </Link>
-                <Link
+                </ALink>
+                <ALink
                   to="/register"
                   className="rounded-lg bg-primary px-4 py-2 text-sm font-medium text-primary-foreground hover:bg-primary-dark"
                 >
                   Register
-                </Link>
+                </ALink>
               </>
             )}
           </div>
@@ -91,9 +92,9 @@ export function PublicLayout({ children }: { children: ReactNode }) {
             <div className="container-page flex flex-col py-2">
               {[...publicNav, me ? { to: home, label: "Dashboard" } : { to: "/login", label: "Login" }, ...(me ? [] : [{ to: "/register", label: "Register" }])].map(
                 (n) => (
-                  <Link key={n.to + n.label} to={n.to} onClick={() => setOpen(false)} className="rounded-lg px-3 py-2.5 text-sm font-medium hover:bg-accent">
+                  <ALink key={n.to + n.label} to={n.to} onClick={() => setOpen(false)} className="rounded-lg px-3 py-2.5 text-sm font-medium hover:bg-accent">
                     {n.label}
-                  </Link>
+                  </ALink>
                 ),
               )}
             </div>
@@ -112,9 +113,9 @@ export function PublicLayout({ children }: { children: ReactNode }) {
           <div>
             <p className="mb-2 text-sm font-semibold">เมนู</p>
             {publicNav.map((n) => (
-              <Link key={n.to} to={n.to} className="block py-1 text-sm text-muted-foreground hover:text-primary">
+              <ALink key={n.to} to={n.to} className="block py-1 text-sm text-muted-foreground hover:text-primary">
                 {n.label}
-              </Link>
+              </ALink>
             ))}
           </div>
           <div>
@@ -218,7 +219,7 @@ export function DashboardLayout({
         <aside className={cn("w-60 shrink-0", open ? "block" : "hidden", "lg:block")}>
           <nav className="sticky top-24 space-y-1 rounded-xl border border-border bg-card p-3 shadow-[var(--shadow-card)]">
             {nav.map((n) => (
-              <Link
+              <ALink
                 key={n.to}
                 to={n.to}
                 onClick={() => setOpen(false)}
@@ -228,7 +229,7 @@ export function DashboardLayout({
                 )}
               >
                 {n.label}
-              </Link>
+              </ALink>
             ))}
           </nav>
         </aside>

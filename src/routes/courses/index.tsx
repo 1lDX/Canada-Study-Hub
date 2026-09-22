@@ -1,3 +1,4 @@
+import { ALink } from "@/components/link";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState } from "react";
 import { PublicLayout } from "@/components/layouts";
@@ -83,12 +84,12 @@ function CoursesPage() {
                 <Badge>{money(c.tuition)}</Badge>
                 <Badge>{c.field}</Badge>
               </div>
-              <Link
+              <ALink
                 to={`/courses/${c.id}`}
                 className="mt-4 inline-flex w-fit rounded-lg bg-primary px-4 py-2 text-sm font-medium text-primary-foreground hover:bg-primary-dark"
               >
                 ดูรายละเอียด
-              </Link>
+              </ALink>
             </Card>
           ))}
         </div>

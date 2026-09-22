@@ -1,3 +1,4 @@
+import { ALink } from "@/components/link";
 import { Link } from "@tanstack/react-router";
 import { useState } from "react";
 import { COURSES, DOC_TYPES, TIMELINE, formatDate, meetsLevel, money } from "@/lib/data";
@@ -46,12 +47,12 @@ export function ApplicationsTable({ role, apps }: { role: Role; apps: Applicatio
             </td>
             <td className="px-4 py-3 text-xs text-muted-foreground">{formatDate(a.submittedAt)}</td>
             <td className="px-4 py-3 text-right">
-              <Link
+              <ALink
                 to={`/${role}/applications/${a.id}`}
                 className="rounded-lg border border-border px-3 py-1.5 text-xs font-medium hover:bg-accent"
               >
                 เปิดดู
-              </Link>
+              </ALink>
             </td>
           </tr>
         );
