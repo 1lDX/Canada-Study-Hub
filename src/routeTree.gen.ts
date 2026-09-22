@@ -14,8 +14,17 @@ import { Route as AboutRouteImport } from './routes/about'
 import { Route as ContactRouteImport } from './routes/contact'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as RegisterRouteImport } from './routes/register'
+import { Route as StudentRouteRouteImport } from './routes/student/route'
 import { Route as CoursesIndexRouteImport } from './routes/courses/index'
 import { Route as CoursesCourseIdRouteImport } from './routes/courses/$courseId'
+import { Route as StudentCoursesRouteImport } from './routes/student/courses'
+import { Route as StudentDashboardRouteImport } from './routes/student/dashboard'
+import { Route as StudentInterestsRouteImport } from './routes/student/interests'
+import { Route as StudentLanguageTestRouteImport } from './routes/student/language-test'
+import { Route as StudentProfileRouteImport } from './routes/student/profile'
+import { Route as StudentApplicationsIndexRouteImport } from './routes/student/applications/index'
+import { Route as StudentApplicationsAppIdRouteImport } from './routes/student/applications/$appId'
+import { Route as StudentApplyCourseIdRouteImport } from './routes/student/apply/$courseId'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -42,6 +51,11 @@ const RegisterRoute = RegisterRouteImport.update({
   path: '/register',
   getParentRoute: () => rootRouteImport,
 } as any)
+const StudentRouteRoute = StudentRouteRouteImport.update({
+  id: '/student',
+  path: '/student',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const CoursesIndexRoute = CoursesIndexRouteImport.update({
   id: '/courses/',
   path: '/courses/',
@@ -52,67 +66,164 @@ const CoursesCourseIdRoute = CoursesCourseIdRouteImport.update({
   path: '/courses/$courseId',
   getParentRoute: () => rootRouteImport,
 } as any)
+const StudentCoursesRoute = StudentCoursesRouteImport.update({
+  id: '/courses',
+  path: '/courses',
+  getParentRoute: () => StudentRouteRoute,
+} as any)
+const StudentDashboardRoute = StudentDashboardRouteImport.update({
+  id: '/dashboard',
+  path: '/dashboard',
+  getParentRoute: () => StudentRouteRoute,
+} as any)
+const StudentInterestsRoute = StudentInterestsRouteImport.update({
+  id: '/interests',
+  path: '/interests',
+  getParentRoute: () => StudentRouteRoute,
+} as any)
+const StudentLanguageTestRoute = StudentLanguageTestRouteImport.update({
+  id: '/language-test',
+  path: '/language-test',
+  getParentRoute: () => StudentRouteRoute,
+} as any)
+const StudentProfileRoute = StudentProfileRouteImport.update({
+  id: '/profile',
+  path: '/profile',
+  getParentRoute: () => StudentRouteRoute,
+} as any)
+const StudentApplicationsIndexRoute =
+  StudentApplicationsIndexRouteImport.update({
+    id: '/applications/',
+    path: '/applications/',
+    getParentRoute: () => StudentRouteRoute,
+  } as any)
+const StudentApplicationsAppIdRoute =
+  StudentApplicationsAppIdRouteImport.update({
+    id: '/applications/$appId',
+    path: '/applications/$appId',
+    getParentRoute: () => StudentRouteRoute,
+  } as any)
+const StudentApplyCourseIdRoute = StudentApplyCourseIdRouteImport.update({
+  id: '/apply/$courseId',
+  path: '/apply/$courseId',
+  getParentRoute: () => StudentRouteRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/student': typeof StudentRouteRouteWithChildren
   '/about': typeof AboutRoute
   '/contact': typeof ContactRoute
   '/login': typeof LoginRoute
   '/register': typeof RegisterRoute
   '/courses/$courseId': typeof CoursesCourseIdRoute
+  '/student/courses': typeof StudentCoursesRoute
+  '/student/dashboard': typeof StudentDashboardRoute
+  '/student/interests': typeof StudentInterestsRoute
+  '/student/language-test': typeof StudentLanguageTestRoute
+  '/student/profile': typeof StudentProfileRoute
   '/courses/': typeof CoursesIndexRoute
+  '/student/applications/$appId': typeof StudentApplicationsAppIdRoute
+  '/student/apply/$courseId': typeof StudentApplyCourseIdRoute
+  '/student/applications/': typeof StudentApplicationsIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/student': typeof StudentRouteRouteWithChildren
   '/about': typeof AboutRoute
   '/contact': typeof ContactRoute
   '/login': typeof LoginRoute
   '/register': typeof RegisterRoute
   '/courses/$courseId': typeof CoursesCourseIdRoute
+  '/student/courses': typeof StudentCoursesRoute
+  '/student/dashboard': typeof StudentDashboardRoute
+  '/student/interests': typeof StudentInterestsRoute
+  '/student/language-test': typeof StudentLanguageTestRoute
+  '/student/profile': typeof StudentProfileRoute
   '/courses': typeof CoursesIndexRoute
+  '/student/applications/$appId': typeof StudentApplicationsAppIdRoute
+  '/student/apply/$courseId': typeof StudentApplyCourseIdRoute
+  '/student/applications': typeof StudentApplicationsIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/student': typeof StudentRouteRouteWithChildren
   '/about': typeof AboutRoute
   '/contact': typeof ContactRoute
   '/login': typeof LoginRoute
   '/register': typeof RegisterRoute
   '/courses/$courseId': typeof CoursesCourseIdRoute
+  '/student/courses': typeof StudentCoursesRoute
+  '/student/dashboard': typeof StudentDashboardRoute
+  '/student/interests': typeof StudentInterestsRoute
+  '/student/language-test': typeof StudentLanguageTestRoute
+  '/student/profile': typeof StudentProfileRoute
   '/courses/': typeof CoursesIndexRoute
+  '/student/applications/$appId': typeof StudentApplicationsAppIdRoute
+  '/student/apply/$courseId': typeof StudentApplyCourseIdRoute
+  '/student/applications/': typeof StudentApplicationsIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/student'
     | '/about'
     | '/contact'
     | '/login'
     | '/register'
     | '/courses/$courseId'
+    | '/student/courses'
+    | '/student/dashboard'
+    | '/student/interests'
+    | '/student/language-test'
+    | '/student/profile'
     | '/courses/'
+    | '/student/applications/$appId'
+    | '/student/apply/$courseId'
+    | '/student/applications/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/student'
     | '/about'
     | '/contact'
     | '/login'
     | '/register'
     | '/courses/$courseId'
+    | '/student/courses'
+    | '/student/dashboard'
+    | '/student/interests'
+    | '/student/language-test'
+    | '/student/profile'
     | '/courses'
+    | '/student/applications/$appId'
+    | '/student/apply/$courseId'
+    | '/student/applications'
   id:
     | '__root__'
     | '/'
+    | '/student'
     | '/about'
     | '/contact'
     | '/login'
     | '/register'
     | '/courses/$courseId'
+    | '/student/courses'
+    | '/student/dashboard'
+    | '/student/interests'
+    | '/student/language-test'
+    | '/student/profile'
     | '/courses/'
+    | '/student/applications/$appId'
+    | '/student/apply/$courseId'
+    | '/student/applications/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  StudentRouteRoute: typeof StudentRouteRouteWithChildren
   AboutRoute: typeof AboutRoute
   ContactRoute: typeof ContactRoute
   LoginRoute: typeof LoginRoute
@@ -158,6 +269,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof RegisterRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/student': {
+      id: '/student'
+      path: '/student'
+      fullPath: '/student'
+      preLoaderRoute: typeof StudentRouteRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/courses/': {
       id: '/courses/'
       path: '/courses'
@@ -172,11 +290,94 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CoursesCourseIdRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/student/courses': {
+      id: '/student/courses'
+      path: '/courses'
+      fullPath: '/student/courses'
+      preLoaderRoute: typeof StudentCoursesRouteImport
+      parentRoute: typeof StudentRouteRoute
+    }
+    '/student/dashboard': {
+      id: '/student/dashboard'
+      path: '/dashboard'
+      fullPath: '/student/dashboard'
+      preLoaderRoute: typeof StudentDashboardRouteImport
+      parentRoute: typeof StudentRouteRoute
+    }
+    '/student/interests': {
+      id: '/student/interests'
+      path: '/interests'
+      fullPath: '/student/interests'
+      preLoaderRoute: typeof StudentInterestsRouteImport
+      parentRoute: typeof StudentRouteRoute
+    }
+    '/student/language-test': {
+      id: '/student/language-test'
+      path: '/language-test'
+      fullPath: '/student/language-test'
+      preLoaderRoute: typeof StudentLanguageTestRouteImport
+      parentRoute: typeof StudentRouteRoute
+    }
+    '/student/profile': {
+      id: '/student/profile'
+      path: '/profile'
+      fullPath: '/student/profile'
+      preLoaderRoute: typeof StudentProfileRouteImport
+      parentRoute: typeof StudentRouteRoute
+    }
+    '/student/applications/': {
+      id: '/student/applications/'
+      path: '/applications'
+      fullPath: '/student/applications/'
+      preLoaderRoute: typeof StudentApplicationsIndexRouteImport
+      parentRoute: typeof StudentRouteRoute
+    }
+    '/student/applications/$appId': {
+      id: '/student/applications/$appId'
+      path: '/applications/$appId'
+      fullPath: '/student/applications/$appId'
+      preLoaderRoute: typeof StudentApplicationsAppIdRouteImport
+      parentRoute: typeof StudentRouteRoute
+    }
+    '/student/apply/$courseId': {
+      id: '/student/apply/$courseId'
+      path: '/apply/$courseId'
+      fullPath: '/student/apply/$courseId'
+      preLoaderRoute: typeof StudentApplyCourseIdRouteImport
+      parentRoute: typeof StudentRouteRoute
+    }
   }
 }
 
+interface StudentRouteRouteChildren {
+  StudentCoursesRoute: typeof StudentCoursesRoute
+  StudentDashboardRoute: typeof StudentDashboardRoute
+  StudentInterestsRoute: typeof StudentInterestsRoute
+  StudentLanguageTestRoute: typeof StudentLanguageTestRoute
+  StudentProfileRoute: typeof StudentProfileRoute
+  StudentApplicationsAppIdRoute: typeof StudentApplicationsAppIdRoute
+  StudentApplyCourseIdRoute: typeof StudentApplyCourseIdRoute
+  StudentApplicationsIndexRoute: typeof StudentApplicationsIndexRoute
+}
+
+const StudentRouteRouteChildren: StudentRouteRouteChildren = {
+  StudentCoursesRoute: StudentCoursesRoute,
+  StudentDashboardRoute: StudentDashboardRoute,
+  StudentInterestsRoute: StudentInterestsRoute,
+  StudentLanguageTestRoute: StudentLanguageTestRoute,
+  StudentProfileRoute: StudentProfileRoute,
+  StudentApplicationsAppIdRoute: StudentApplicationsAppIdRoute,
+  StudentApplyCourseIdRoute: StudentApplyCourseIdRoute,
+  StudentApplicationsIndexRoute: StudentApplicationsIndexRoute,
+}
+
+const StudentRouteRouteWithChildren = StudentRouteRoute._addFileChildren(
+  StudentRouteRouteChildren,
+)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  StudentRouteRoute: StudentRouteRouteWithChildren,
   AboutRoute: AboutRoute,
   ContactRoute: ContactRoute,
   LoginRoute: LoginRoute,
