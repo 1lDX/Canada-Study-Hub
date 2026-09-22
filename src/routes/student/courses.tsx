@@ -15,7 +15,7 @@ export const Route = createFileRoute("/student/courses")({
       { property: "og:description", content: "ระบบจับคู่หลักสูตรจากเมือง สาขา งบประมาณ และระดับภาษาของคุณ" },
     ],
   }),
-  component: StudentCourses;
+  component: StudentCourses,
 });
 
 function StudentCourses() {
