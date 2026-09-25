@@ -114,7 +114,7 @@ export function PaymentsPage({ role }: { role: R }) {
               <AppBlock key={a.id} role={role} app={a}>
                 <PaymentsCard app={a} />
                 <div className="flex flex-wrap gap-2">
-                  {role === "agent" && p.status === "รอตรวจสอบการชำระเงิน" && (
+                  {role === "agent" && p?.status === "รอตรวจสอบการชำระเงิน" && (
                     <>
                       <Button variant="success" onClick={() => act(a.id, "agent_verify_payment")}>
                         ยืนยันและส่งให้ College
@@ -122,7 +122,7 @@ export function PaymentsPage({ role }: { role: R }) {
                       <NoteAction label="ส่งกลับให้แก้ไข" variant="danger" onSubmit={(note) => act(a.id, "agent_reject_payment", { note })} />
                     </>
                   )}
-                  {role === "college" && p.status === "Agent ตรวจแล้ว" && (
+                  {role === "college" && p?.status === "Agent ตรวจแล้ว" && (
                     <Button variant="success" onClick={() => act(a.id, "college_confirm_payment")}>
                       ยืนยันการชำระเงิน
                     </Button>
