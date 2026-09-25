@@ -160,7 +160,7 @@ export function Empty({ children }: { children: ReactNode }) {
   );
 }
 
-export function FileInput({ onFile, value }: { onFile: (name: string) => void; value?: string }) {
+export function FileInput({ onFile, value }: { onFile: (name: string) => void; value?: string | undefined }) {
   return (
     <div className="flex flex-wrap items-center gap-3 rounded-lg border border-dashed border-border bg-surface px-3 py-3">
       <input
