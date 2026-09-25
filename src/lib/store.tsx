@@ -28,7 +28,7 @@ export type LanguageTest = {
   score: string;
   level: string;
   testDate: string;
-  expiryDate?: string;
+  expiryDate?: string | undefined;
   fileName: string;
 };
 
