@@ -1,5 +1,6 @@
 -- MapleLeaf Education — portal schema
 -- Accounts/roles, courses, applications workflow, documents, offers, invoices, payments, notifications.
+-- Reference rows (courses, status lists) are seeded by src/lib/seed.functions.ts from src/lib/data.ts.
 
 -- ============ 1. Enum ============
 create type public.app_role as enum ('student', 'agent', 'college');
@@ -49,7 +50,23 @@ grant select on public.colleges to authenticated;
 grant all on public.colleges to service_role;
 alter table public.colleges enable row level security;
 
--- ============ 5. courses ============
+-- ============ 5. status dictionaries (workflow states are validated by the database) ============
+create table public.application_statuses (
+  status text primary key,
+  position int not null
+);
+grant select on public.application_statuses to authenticated;
+grant all on public.application_statuses to service_role;
+alter table public.application_statuses enable row level security;
+
+create table public.payment_statuses (
+  status text primary key
+);
+grant select on public.payment_statuses to authenticated;
+grant all on public.payment_statuses to service_role;
+alter table public.payment_statuses enable row level security;
+
+-- ============ 6. courses ============
 create table public.courses (
   id text primary key,
   course_name text not null,
@@ -69,21 +86,7 @@ grant select on public.courses to anon, authenticated;
 grant all on public.courses to service_role;
 alter table public.courses enable row level security;
 
-insert into public.courses
-  (id, course_name, college_name, city, course_type, field, duration, tuition, language_level, intake, description)
-values
-  ('c1', 'Business Administration – Marketing', 'Maple Ridge College', 'Toronto', 'Diploma', 'Business', '2 years', 15800, 'B2', 'Jan / May / Sep', 'หลักสูตรบริหารธุรกิจเน้นการตลาดดิจิทัล มี Co-op 4 เดือน และเตรียมพร้อมสู่ Post-Graduation Work Permit'),
-  ('c2', 'General English Program', 'Vancouver Language Institute', 'Vancouver', 'Language Program', 'Business', '3 months', 4200, 'A1', 'ทุกเดือน', 'หลักสูตรภาษาอังกฤษทั่วไป 25 ชั่วโมง/สัปดาห์ เหมาะสำหรับผู้เริ่มต้นและปรับพื้นฐานก่อนเข้าคอลเลจ'),
-  ('c3', 'Computer Programming & Analysis', 'St. Lawrence Institute of Technology', 'Ottawa', 'Diploma', 'Information Technology', '2 years', 17400, 'B2', 'Jan / Sep', 'เขียนโปรแกรมเว็บและระบบฐานข้อมูล พร้อมโปรเจกต์จริงร่วมกับบริษัทเทคโนโลยีในออตตาวา'),
-  ('c4', 'Hospitality & Tourism Management', 'Rockies Hospitality College', 'Calgary', 'Certificate', 'Hospitality', '1 year', 11200, 'B1', 'Feb / Aug', 'หลักสูตรการโรงแรมและท่องเที่ยว มีฝึกงานในรีสอร์ตเขตเทือกเขาร็อกกี'),
-  ('c5', 'Practical Nursing Assistant', 'Halifax Health College', 'Halifax', 'Diploma', 'Healthcare', '2 years', 18900, 'C1', 'Sep', 'หลักสูตรผู้ช่วยพยาบาลที่ได้รับการรับรอง มีชั่วโมงปฏิบัติงานในโรงพยาบาลรัฐ'),
-  ('c6', 'Graphic & Interactive Design', 'Montreal School of Design', 'Montreal', 'Certificate', 'Design', '1 year', 12600, 'B1', 'Jan / Sep', 'ออกแบบกราฟิกและ UI/UX พร้อมสร้าง Portfolio ระดับมืออาชีพ'),
-  ('c7', 'Project Management (Postgraduate)', 'Maple Ridge College', 'Toronto', 'Postgraduate Diploma', 'Business', '1 year', 16300, 'B2', 'Jan / May', 'หลักสูตรต่อยอดสำหรับผู้จบปริญญาตรี เตรียมสอบ CAPM/PMP'),
-  ('c8', 'Mechanical Engineering Technician', 'St. Lawrence Institute of Technology', 'Ottawa', 'Diploma', 'Engineering', '2 years', 16800, 'B1', 'Sep', 'ช่างเทคนิควิศวกรรมเครื่องกล เรียนการเขียนแบบ CAD และงานปฏิบัติในโรงงาน'),
-  ('c9', 'Academic English Pathway', 'Maple Ridge College', 'Toronto', 'Language Program', 'Business', '6 months', 6800, 'A2', 'ทุก 8 สัปดาห์', 'ปรับพื้นฐานภาษาอังกฤษเชิงวิชาการ จบแล้วเข้าเรียน Diploma ได้โดยไม่ต้องสอบ IELTS')
-on conflict (id) do nothing;
-
--- ============ 6. study interests / language tests ============
+-- ============ 7. study interests / language tests ============
 create table public.study_interests (
   user_id uuid primary key references public.profiles (id) on delete cascade,
   city text not null default '',
@@ -114,7 +117,7 @@ grant select, insert, update on public.language_tests to authenticated;
 grant all on public.language_tests to service_role;
 alter table public.language_tests enable row level security;
 
--- ============ 7. applications ============
+-- ============ 8. applications ============
 create sequence public.application_code_seq start 1001;
 
 create table public.applications (
@@ -124,7 +127,7 @@ create table public.applications (
   course_id text not null references public.courses (id),
   agent_id uuid not null references public.agents (account_id),
   college_id uuid references public.colleges (account_id),
-  status text not null default 'รอตรวจสอบ' check (status in ('รอตรวจสอบ', 'ส่งกลับให้แก้ไข', 'ส่งให้ College แล้ว', 'ออก Offer แล้ว', 'ส่งเอกสารให้นักเรียนแล้ว', 'รอชำระเงิน', 'รอตรวจสอบการชำระเงิน', 'ชำระเงินแล้ว', 'เตรียมรับนักเรียน', 'เสร็จสิ้น')),
+  status text not null references public.application_statuses (status),
   submitted_at timestamptz not null default now(),
   created_at timestamptz not null default now()
 );
@@ -135,7 +138,7 @@ grant select, insert, update on public.applications to authenticated;
 grant all on public.applications to service_role;
 alter table public.applications enable row level security;
 
--- ============ 8. workflow child tables ============
+-- ============ 9. workflow child tables ============
 create table public.application_documents (
   id uuid primary key default gen_random_uuid(),
   application_id uuid not null references public.applications (id) on delete cascade,
@@ -199,7 +202,7 @@ create table public.payments (
   paid_date date not null,
   file_name text not null default '',
   file_path text not null default '',
-  status text not null default 'รอตรวจสอบการชำระเงิน' check (status in ('รอตรวจสอบการชำระเงิน', 'ส่งกลับให้แก้ไข', 'Agent ตรวจแล้ว', 'ชำระเงินแล้ว')),
+  status text not null references public.payment_statuses (status),
   note text,
   submitted_by uuid references public.profiles (id) on delete set null,
   created_at timestamptz not null default now()
@@ -222,7 +225,7 @@ grant select, update on public.notifications to authenticated;
 grant all on public.notifications to service_role;
 alter table public.notifications enable row level security;
 
--- ============ 9. helper functions ============
+-- ============ 10. helper functions ============
 create or replace function public.level_rank(l text)
 returns int
 language sql
@@ -311,7 +314,7 @@ grant execute on function public.my_role() to authenticated;
 grant execute on function public.is_party_on(uuid) to authenticated;
 grant execute on function public.post_notification(uuid, text, text) to authenticated;
 
--- ============ 10. Row Level Security policies ============
+-- ============ 11. Row Level Security policies ============
 create policy "profiles: own read" on public.profiles
   for select to authenticated using (id = auth.uid());
 
@@ -341,6 +344,12 @@ create policy "colleges: own read" on public.colleges
 
 create policy "colleges: staff read" on public.colleges
   for select to authenticated using (public.has_role(account_id, 'agent') or public.has_role(account_id, 'college'));
+
+create policy "statuses: application read" on public.application_statuses
+  for select to authenticated using (true);
+
+create policy "statuses: payment read" on public.payment_statuses
+  for select to authenticated using (true);
 
 create policy "courses: public read" on public.courses
   for select to anon, authenticated using (is_active);
@@ -409,7 +418,7 @@ create policy "history: party insert" on public.application_history
 create policy "offers: party read" on public.offers
   for select to authenticated using (public.is_party_on(application_id));
 
-create policy "offers: party write" on public.offers
+create policy "offers: party insert" on public.offers
   for insert to authenticated with check (public.is_party_on(application_id));
 
 create policy "offers: party update" on public.offers
@@ -418,7 +427,7 @@ create policy "offers: party update" on public.offers
 create policy "invoices: party read" on public.invoices
   for select to authenticated using (public.is_party_on(application_id));
 
-create policy "invoices: party write" on public.invoices
+create policy "invoices: party insert" on public.invoices
   for insert to authenticated with check (public.is_party_on(application_id));
 
 create policy "invoices: party update" on public.invoices
@@ -439,9 +448,9 @@ create policy "notifications: own read" on public.notifications
 create policy "notifications: own update" on public.notifications
   for update to authenticated using (user_id = auth.uid()) with check (user_id = auth.uid());
 
--- ============ 11. Storage policies ============
+-- ============ 12. Storage policies ============
 -- buckets: documents (application docs), results (language test results), offers, invoices, payments
--- path convention: <application_id>/<file> for the workflow buckets, <user_id>/<file> for results
+-- path convention: <application_id>/<file> for workflow buckets, <user_id>/<file> for results
 create policy "documents: upload by party" on storage.objects
   for insert to authenticated
   with check (bucket_id = 'documents' and public.is_party_on(((storage.foldername(name))[1])::uuid));
