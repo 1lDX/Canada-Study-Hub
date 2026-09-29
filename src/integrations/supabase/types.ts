@@ -630,7 +630,12 @@ export type Database = {
       level_rank: { Args: { l: string }; Returns: number }
       my_role: { Args: never; Returns: Database["public"]["Enums"]["app_role"] }
       post_notification: {
-        Args: { _body: string; _title: string; _user_id: string }
+        Args: {
+          _application_id: string
+          _body: string
+          _title: string
+          _user_id: string
+        }
         Returns: undefined
       }
     }
