@@ -268,8 +268,10 @@ export const runApplicationAction = createServerFn({ method: "POST" })
         if (!invoice) throw new Error("ยังไม่มี Invoice: " + app.code);
         if (Number(payment.amount) !== Number(invoice.amount)) {
           throw new Error(
-            `Invoice ${app.code}: ${AWAITING_PAYMENT} (${Number(invoice.amount).toLocaleString("en-CA")} CAD)`,
+            `Amount does not match Invoice ${app.code}: expected ${Number(invoice.amount).toLocaleString("en-CA")} CAD`,
           );
+        }
+        const { error: paymentError } = await supabase.from("payments").insert({
           application_id: app.id,
           amount: payment.amount,
           paid_date: payment.paidDate,
