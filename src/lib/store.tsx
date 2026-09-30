@@ -194,6 +194,12 @@ type Ctx = {
   myInterests: () => Interests | undefined;
   canApply: (courseId: string) => boolean;
   createApplication: (courseId: string, docs: { key: string; fileName: string; filePath: string }[]) => Promise<Application | null>;
+  uploadAppFile: (
+    appId: string,
+    bucket: "documents" | "offers" | "invoices" | "payments",
+    name: string,
+    file: File,
+  ) => Promise<{ fileName: string; filePath: string }>;
   uploadDoc: (appId: string, doc: { key: string; file: File }) => Promise<void>;
   act: (appId: string, action: ApplicationAction, payload?: ActionPayload) => Promise<void>;
   markRead: (id?: string) => Promise<void>;
@@ -472,6 +478,13 @@ export function StoreProvider({ children }: { children: ReactNode }) {
         });
         if (!result) return null;
         return dbRef.current.applications.find((a) => a.uuid === result.uuid) ?? null;
+      },
+      uploadAppFile: async (appId, bucket, name, file) => {
+        const app = appByCode(appId);
+        if (!app) throw new Error("ไมพบใบสมัครน้");
+        const path = `${app.uuid}/${name}.${extensionOf(file.name)}`;
+        await uploadFile(bucket, path, file);
+        return { fileName: file.name, filePath: path };
       },
       uploadDoc: async (appId, doc) => {
         await guard(async () => {
