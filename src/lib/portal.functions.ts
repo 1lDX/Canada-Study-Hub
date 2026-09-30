@@ -265,11 +265,11 @@ export const runApplicationAction = createServerFn({ method: "POST" })
           .eq("application_id", app.id)
           .maybeSingle();
         if (invoiceError) throw new Error(invoiceError.message);
-        if (!invoice) throw new Error("None Invoice");
+        if (!invoice) throw new Error("ยังไม่มี Invoice: " + app.code);
         if (Number(payment.amount) !== Number(invoice.amount)) {
-          throw new Error(`ยอดเงิน ไมตรงก ับ Invoice (ต้องชำระ ${Number(invoice.amount).toLocaleString("en-CA")} CAD)`);
-        }
-        const { error: paymentError } = await supabase.from("payments").insert({
+          throw new Error(
+            `Invoice ${app.code}: ${AWAITING_PAYMENT} (${Number(invoice.amount).toLocaleString("en-CA")} CAD)`,
+          );
           application_id: app.id,
           amount: payment.amount,
           paid_date: payment.paidDate,
@@ -314,13 +314,13 @@ export const runApplicationAction = createServerFn({ method: "POST" })
           .eq("status", PAYMENT_AGENT_CHECKED);
         if (error) throw new Error(error.message);
         await setStatus(supabase, app, PREPARING, userId, LABEL.college);
-        await notify(supabase, app.id, app.student_id, "ชำระเงินเรียบร้อย", `${app.code} College กำลังเตรียมรบั นักเรียน`);
-        await notify(supabase, app.id, app.agent_id, "College ยืนยันการชำระเงิน", `${app.code} เตรียมรบั นักเรียน`);
+        await notify(supabase, app.id, app.student_id, "ຊຳລະເງິນຮຽບຮ້ອຍ", `${app.code} College → ${PREPARING}`);
+        await notify(supabase, app.id, app.agent_id, "College ຢືນຢັນການຊຳລະເງິນ", `${app.code} ${PREPARING}`);
         break;
       }
       case "complete": {
         await setStatus(supabase, app, COMPLETED, userId, LABEL.college);
-        await notify(supabase, app.id, app.student_id, "ขั้นตอนเสร็จสิ้น", complete_body);
+        await notify(supabase, app.id, app.student_id, "ຂັ້ນຕອນເສັດສິ້ນ", `${app.code} ${COMPLETED}`);
         await notify(supabase, app.id, app.agent_id, "Application เสร็จสิ้น", `${app.code} ปิดเคสเรียบร้อย`);
         break;
       }
