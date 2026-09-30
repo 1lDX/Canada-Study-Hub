@@ -1,4 +1,5 @@
 import { createServerFn } from "@tanstack/react-start";
+import type { SupabaseClient } from "@supabase/supabase-js";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { PAYMENT_STATUSES, STATUSES } from "./data";
 
@@ -56,11 +57,8 @@ type AppRow = {
   status: string;
 };
 
-type Client = {
-  from: (table: string) => any;
-  rpc: (fn: string, args?: Record<string, unknown>) => Promise<{ data?: any; error?: { message: string } }>;
-  storage: { from: (bucket: string) => any };
-};
+/** The middleware client (RLS as the caller) or the service-role client. */
+type Client = SupabaseClient;
 
 async function notify(supabase: Client, applicationId: string, userId: string, title: string, body: string) {
   const { error } = await supabase.rpc("post_notification", {
@@ -74,7 +72,7 @@ async function notify(supabase: Client, applicationId: string, userId: string, t
 
 async function addHistory(
   supabase: Client,
-  row: { application_id: string; status: string; note?: string; actor_id: string; actor_label: string },
+  row: { application_id: string; status: string; note?: string | undefined; actor_id: string; actor_label: string },
 ) {
   const { error } = await supabase.from("application_history").insert(row);
   if (error) throw new Error(error.message);
