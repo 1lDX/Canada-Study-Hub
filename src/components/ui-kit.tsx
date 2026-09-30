@@ -1,5 +1,6 @@
 import { Link } from "@tanstack/react-router";
-import type { ReactNode } from "react";
+import { useState, type ReactNode } from "react";
+import { validateFile } from "@/lib/uploads";
 import { cn } from "@/lib/utils";
 
 export function Card({ className, children }: { className?: string; children: ReactNode }) {
@@ -160,23 +161,36 @@ export function Empty({ children }: { children: ReactNode }) {
   );
 }
 
-export function FileInput({ onFile, value }: { onFile: (name: string) => void; value?: string | undefined }) {
+export function FileInput({
+  onFile,
+  value,
+  accept = ".pdf,.jpg,.jpeg,.png",
+}: {
+  onFile: (file: File) => void;
+  value?: string | undefined;
+  accept?: string;
+}) {
+  const [error, setError] = useState("");
   return (
     <div className="flex flex-wrap items-center gap-3 rounded-lg border border-dashed border-border bg-surface px-3 py-3">
       <input
         type="file"
-        accept=".pdf,.jpg,.jpeg,.png"
+        accept={accept}
         onChange={(e) => {
           const f = e.target.files?.[0];
           if (!f) return;
-          if (f.size > 8 * 1024 * 1024) {
-            alert("ไฟล์ต้องไม่เกิน 8 MB");
+          const problem = validateFile(f);
+          if (problem) {
+            setError(problem);
+            e.target.value = "";
             return;
           }
-          onFile(f.name);
+          setError("");
+          onFile(f);
         }}
         className="text-xs"
       />
+      {error && <span className="text-xs text-destructive">{error}</span>}
       {value && <Badge tone="success">อัปโหลดแล้ว: {value}</Badge>}
     </div>
   );

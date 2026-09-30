@@ -186,6 +186,14 @@ export const COURSES: Course[] = [
 
 export const TEST_TYPES = ["IELTS", "TOEFL iBT", "Duolingo English Test", "CELPIP", "PTE Academic"];
 
+export const PAYMENT_STATUSES = [
+  "รอตรวจสอบการชำระเงิน",
+  "ส่งกลับให้แก้ไข",
+  "Agent ตรวจแล้ว",
+  "ชำระเงินแล้ว",
+] as const;
+export type PaymentStatus = (typeof PAYMENT_STATUSES)[number];
+
 export function money(n: number) {
   return "CA$ " + n.toLocaleString("en-CA");
 }

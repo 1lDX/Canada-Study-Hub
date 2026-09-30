@@ -14,7 +14,7 @@ export function validateFile(file: File): string | null {
 
 export function extensionOf(name: string) {
   const parts = name.split(".");
-  return (parts.length > 1 ? parts[parts.length - 1] : "pdf").toLowerCase();
+  return (parts.at(-1) ?? "pdf").toLowerCase();
 }
 
 /** Files picked before an application exists are held here until the student submits. */
@@ -38,7 +38,7 @@ export async function removeFile(bucket: string, path: string) {
 /** Private buckets: a short-lived signed URL is created for the signed-in user, then the browser downloads it. */
 export async function downloadStoredFile(bucket: string, path: string, fileName: string) {
   if (!path) throw new Error("ยังไม่มีไฟล์ของรายการนี้ในระบบ");
-  const { data, error } = await supabase.storage.from(bucket).createSignedDownloadUrl(path, 300);
+  const { data, error } = await supabase.storage.from(bucket).createSignedUrl(path, 300, { download: fileName || "document" });
   if (error || !data) throw new Error(`ดาวน์โหลด ${fileName} ไม่สำเร็จ${error ? `: ${error.message}` : ""}`);
   const link = document.createElement("a");
   link.href = data.signedUrl;
