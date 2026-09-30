@@ -1,11 +1,17 @@
 import { ALink } from "@/components/link";
 import { Link } from "@tanstack/react-router";
 import { useState } from "react";
-import { COURSES, DOC_TYPES, TIMELINE, formatDate, meetsLevel, money } from "@/lib/data";
+import { DOC_TYPES, TIMELINE, formatDate, meetsLevel, money, type Course } from "@/lib/data";
 import { missingDocs, useStore, type Application, type Role } from "@/lib/store";
+import { downloadStoredFile } from "@/lib/uploads";
+import { toast } from "sonner";
 import { Badge, Button, Card, Empty, Field, FileInput, StatusBadge, Table, inputClass } from "./ui-kit";
 
-export const courseOf = (id: string) => COURSES.find((c) => c.id === id);
+/** Course details come from the database: courses are loaded once into the store. */
+export function useCourseOf() {
+  const { db } = useStore();
+  return (id: string): Course | undefined => db.courses.find((c) => c.id === id);
+}
 
 export function useScopedApps(role: Role) {
   const { db, me } = useStore();
@@ -21,6 +27,7 @@ export function studentOf(app: Application) {
 }
 
 export function ApplicationsTable({ role, apps }: { role: Role; apps: Application[] }) {
+  const courseOf = useCourseOf();
   const { db } = useStore();
   if (!apps.length) return <Empty>ยังไม่มี Application ในรายการนี้</Empty>;
   return (
@@ -62,6 +69,7 @@ export function ApplicationsTable({ role, apps }: { role: Role; apps: Applicatio
 }
 
 export function AutoChecks({ app }: { app: Application }) {
+  const courseOf = useCourseOf();
   const { db } = useStore();
   const course = courseOf(app.courseId)!;
   const test = db.tests[app.studentId];
@@ -109,6 +117,24 @@ export function DocsList({ app }: { app: Application }) {
               {f ? (
                 <span className="flex items-center gap-2 text-xs">
                   <span className="text-muted-foreground">{f.fileName}</span>
+
+                  {f.filePath && (
+
+                    <button
+
+                      type="button"
+
+                      onClick={() => void downloadStoredFile("documents", f.filePath, f.fileName)}
+
+                      className="font-medium text-primary hover:underline"
+
+                    >
+
+                      ดาวนโหลด
+
+                    </button>
+
+                  )}
                   <Badge tone="success">อัปโหลดแล้ว</Badge>
                 </span>
               ) : (
@@ -160,6 +186,7 @@ export function Timeline({ app }: { app: Application }) {
 }
 
 export function StudentSummary({ app }: { app: Application }) {
+  const courseOf = useCourseOf();
   const { db } = useStore();
   const st = db.accounts.find((a) => a.id === app.studentId);
   const test = db.tests[app.studentId];
@@ -183,7 +210,26 @@ export function StudentSummary({ app }: { app: Application }) {
           <Row k="วันที่สอบ" v={test?.testDate ?? "-"} />
           <Row k="หมดอายุ" v={test?.expiryDate ?? "-"} />
           <Row k="ไฟล์" v={test?.fileName ?? "-"} />
-        </dl>
+
+          </dl>
+
+          {test?.filePath && (
+
+            <button
+
+              type="button"
+
+              onClick={() => void downloadStoredFile("results", test.filePath, test.fileName)}
+
+              className="mt-2 text-xs font-medium text-primary hover:underline"
+
+            >
+
+              ดาวนโหลดผลสอบ
+
+            </button>
+
+          )}
       </Card>
       <Card>
         <p className="mb-3 font-semibold">หลักสูตรที่สมัคร</p>
@@ -225,12 +271,12 @@ export function OfferInvoiceCard({ app }: { app: Application }) {
       </dl>
       <div className="mt-3 flex gap-2">
         {app.offer && (
-          <Button variant="outline" size="sm" onClick={() => alert("ดาวน์โหลด " + app.offer!.fileName)}>
+          <Button variant="outline" size="sm" onClick={() => void downloadStoredFile("offers", app.offer!.filePath, app.offer!.fileName)}>
             ดาวน์โหลด Offer
           </Button>
         )}
         {app.invoice && (
-          <Button variant="outline" size="sm" onClick={() => alert("ดาวน์โหลด " + app.invoice!.fileName)}>
+          <Button variant="outline" size="sm" onClick={() => void downloadStoredFile("invoices", app.invoice!.filePath, app.invoice!.fileName)}>
             ดาวน์โหลด Invoice
           </Button>
         )}
@@ -248,7 +294,18 @@ export function PaymentsCard({ app }: { app: Application }) {
           <td className="px-4 py-3 font-medium">{p.id}</td>
           <td className="px-4 py-3">{money(p.amount)}</td>
           <td className="px-4 py-3">{p.paidDate}</td>
-          <td className="px-4 py-3 text-xs text-muted-foreground">{p.fileName}</td>
+          <td className="px-4 py-3 text-xs text-muted-foreground">
+            {p.fileName}
+            {p.filePath && (
+              <button
+                type="button"
+                onClick={() => void downloadStoredFile("payments", p.filePath, p.fileName)}
+                className="ml-2 font-medium text-primary hover:underline"
+              >
+                ดดูok
+              </button>
+            )}
+          </td>
           <td className="px-4 py-3">
             <StatusBadge status={p.status} />
             {p.note && <p className="mt-1 text-xs text-destructive">{p.note}</p>}
@@ -303,20 +360,45 @@ export function NoteAction({
 }
 
 export function IssueOfferForm({ appId, amount }: { appId: string; amount: number }) {
-  const { act } = useStore();
-  const [offerFile, setOfferFile] = useState("");
-  const [invoiceFile, setInvoiceFile] = useState("");
+  const { act, uploadAppFile } = useStore();
+  const [offer, setOffer] = useState<{ fileName: string; filePath: string } | null>(null);
+  const [invoice, setInvoice] = useState<{ fileName: string; filePath: string } | null>(null);
   const [amt, setAmt] = useState(amount);
   const [due, setDue] = useState("");
+  const [busy, setBusy] = useState(false);
+
+  const pick =
+    (bucket: "offers" | "invoices", name: string, setter: (v: { fileName: string; filePath: string }) => void) =>
+    async (file: File) => {
+      setBusy(true);
+      try {
+        setter(await uploadAppFile(appId, bucket, name, file));
+      } catch (e) {
+        toast.error(e instanceof Error ? e.message : "Upload failed");
+      } finally {
+        setBusy(false);
+      }
+    };
+
+  const submit = async () => {
+    if (!offer || !invoice) return;
+    setBusy(true);
+    try {
+      await act(appId, "college_issue_offer", { offer, invoice: { ...invoice, amount: amt, dueDate: due } });
+    } finally {
+      setBusy(false);
+    }
+  };
+
   return (
     <Card>
       <p className="mb-3 font-semibold">อนุมัติและออก Offer / Invoice</p>
       <div className="space-y-3">
         <Field label="Offer Letter (PDF)">
-          <FileInput onFile={setOfferFile} value={offerFile} />
+          <FileInput onFile={pick("offers", "offer", setOffer)} value={offer?.fileName} />
         </Field>
         <Field label="Invoice (PDF)">
-          <FileInput onFile={setInvoiceFile} value={invoiceFile} />
+          <FileInput onFile={pick("invoices", "invoice", setInvoice)} value={invoice?.fileName} />
         </Field>
         <div className="grid gap-3 sm:grid-cols-2">
           <Field label="ยอดที่ต้องชำระ (CAD)">
@@ -326,11 +408,8 @@ export function IssueOfferForm({ appId, amount }: { appId: string; amount: numbe
             <input type="date" className={inputClass} value={due} onChange={(e) => setDue(e.target.value)} />
           </Field>
         </div>
-        <Button
-          disabled={!offerFile || !invoiceFile || !due}
-          onClick={() => act(appId, "college_issue_offer", { offerFile, invoiceFile, amount: amt, dueDate: due })}
-        >
-          อนุมัติและอัปโหลดเอกสาร
+        <Button disabled={!offer || !invoice || !due || busy} onClick={() => void submit()}>
+          {busy ? "กำลังบันทึก..." : "อนุมัติและอัปโหลดเอกสาร"}
         </Button>
       </div>
     </Card>

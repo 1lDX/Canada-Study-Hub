@@ -10,7 +10,7 @@ import {
   PaymentsCard,
   StudentSummary,
   Timeline,
-  courseOf,
+  useCourseOf,
   useScopedApps,
 } from "@/components/application-views";
 import { Button, Card, Empty, SectionTitle, Stat, StatusBadge } from "@/components/ui-kit";
@@ -22,6 +22,7 @@ type R = "agent" | "college";
 const navOf = (r: R) => (r === "agent" ? agentNav : collegeNav);
 
 function AppBlock({ role, app, children }: { role: R; app: Application; children: React.ReactNode }) {
+  const courseOf = useCourseOf();
   return (
     <div className="space-y-3">
       <div className="flex flex-wrap items-center gap-3">
@@ -57,6 +58,7 @@ export function DocumentsPage({ role }: { role: R }) {
 }
 
 export function OffersPage({ role }: { role: R }) {
+  const courseOf = useCourseOf();
   const apps = useScopedApps(role);
   const { act } = useStore();
   const toIssue = apps.filter((a) => a.status === "ส่งให้ College แล้ว");
@@ -166,6 +168,7 @@ export function CollegeDashboardView() {
 }
 
 export function CollegeAppDetailView({ appId }: { appId: string }) {
+  const courseOf = useCourseOf();
   const { db, act } = useStore();
   const app = db.applications.find((a) => a.id === appId && !!a.collegeId);
   if (!app)
