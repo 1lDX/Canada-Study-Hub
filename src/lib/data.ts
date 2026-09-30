@@ -188,9 +188,9 @@ export const TEST_TYPES = ["IELTS", "TOEFL iBT", "Duolingo English Test", "CELPI
 
 export const PAYMENT_STATUSES = [
   "รอตรวจสอบการชำระเงิน",
-  "ส่ງກັບໃຫ້ແກ້ໄຂ",
-  "Agent ກວດແລ້ວ",
-  "ຊຳລະເງິນແລ້ວ",
+  "ส่งกลับให้แก้ไข",
+  "Agent ตรวจแล้ว",
+  "ชำระเงินแล้ว",
 ] as const;
 export type PaymentStatus = (typeof PAYMENT_STATUSES)[number];
 

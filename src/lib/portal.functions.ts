@@ -216,7 +216,7 @@ export const runApplicationAction = createServerFn({ method: "POST" })
       }
       case "college_request_info": {
         await setStatus(supabase, app, RETURNED, userId, LABEL.college, data.note);
-        await notify(supabase, app.id, app.agent_id, "College ขอข้อมูลเพิ่מთםเตม", `${app.code}: ${data.note ?? ""}`);
+        await notify(supabase, app.id, app.agent_id, "College ขอข้อมูลเพิ่มเติม", `${app.code}: ${data.note ?? ""}`);
         await notify(supabase, app.id, app.student_id, "ต้องแก้ไข Application", `${app.code}: ${data.note ?? ""}`);
         break;
       }
@@ -265,7 +265,7 @@ export const runApplicationAction = createServerFn({ method: "POST" })
           .eq("application_id", app.id)
           .maybeSingle();
         if (invoiceError) throw new Error(invoiceError.message);
-        if (!invoice) throw new Error("ย งไม่มี Invoice สำหรັບใบสมัครน");
+        if (!invoice) throw new Error("None Invoice");
         if (Number(payment.amount) !== Number(invoice.amount)) {
           throw new Error(`ยอดเงิน ไมตรงก ับ Invoice (ต้องชำระ ${Number(invoice.amount).toLocaleString("en-CA")} CAD)`);
         }
@@ -320,7 +320,7 @@ export const runApplicationAction = createServerFn({ method: "POST" })
       }
       case "complete": {
         await setStatus(supabase, app, COMPLETED, userId, LABEL.college);
-        await notify(supabase, app.id, app.student_id, "ขั้นตอนเสร็จสิ้น", `${app.code} เสร็จสมบูรณ์ ขอใหเ้ດินทางปลอดภย`);
+        await notify(supabase, app.id, app.student_id, "ขั้นตอนเสร็จสิ้น", complete_body);
         await notify(supabase, app.id, app.agent_id, "Application เสร็จสิ้น", `${app.code} ปิดเคสเรียบร้อย`);
         break;
       }
