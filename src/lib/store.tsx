@@ -372,11 +372,10 @@ export function StoreProvider({ children }: { children: ReactNode }) {
       login: async (email, password) => {
         const { data, error } = await supabase.auth.signInWithPassword({ email: email.trim(), password });
         if (error || !data.user) {
-          toast.error(error?.message ?? "เขาสู่ระบบไมไ่ด้");
+          toast.error("อีเมลหรือรหัสผ่านไม่ถูกต้อง");
           return null;
         }
-        await applyUser(data.user);
-        return meRef.current === data.user.id ? (dbRef.current ? (undefined as unknown as Account) : null) : null;
+        return applyUser(data.user);
       },
       register: async (a) => {
         const { data, error } = await supabase.auth.signUp({
@@ -465,19 +464,16 @@ export function StoreProvider({ children }: { children: ReactNode }) {
           if (!app) throw new Error("ไมพบบัใบสมัครน้");
           const path = `${app.uuid}/${doc.key}.${extensionOf(doc.file.name)}`;
           await uploadFile("documents", path, doc.file);
-          const { error: deleteError } = await supabase
-            .from("application_documents")
-            .delete()
-            .eq("application_id", app.uuid)
-            .eq("doc_key", doc.key);
-          if (deleteError) throw new Error(deleteError.message);
-          const { error } = await supabase.from("application_documents").insert({
-            application_id: app.uuid,
-            doc_key: doc.key,
-            file_name: doc.file.name,
-            file_path: path,
-            uploaded_by: me?.id,
-          });
+          const { error } = await supabase.from("application_documents").upsert(
+            {
+              application_id: app.uuid,
+              doc_key: doc.key,
+              file_name: doc.file.name,
+              file_path: path,
+              uploaded_by: me?.id,
+            },
+            { onConflict: "application_id,doc_key" },
+          );
           if (error) throw new Error(error.message);
           await refresh();
         });
