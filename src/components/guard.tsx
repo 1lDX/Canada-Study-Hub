@@ -5,7 +5,13 @@ import { useStore, type Role } from "@/lib/store";
 import { Card } from "./ui-kit";
 
 export function RoleGuard({ role, children }: { role: Role; children: ReactNode }) {
-  const { me } = useStore();
+  const { me, loading } = useStore();
+  if (loading)
+    return (
+      <div className="grid min-h-screen place-items-center px-4">
+        <p className="text-sm text-muted-foreground">Loading...</p>
+      </div>
+    );
   if (!me)
     return (
       <div className="grid min-h-screen place-items-center px-4">
