@@ -290,32 +290,48 @@ export function StoreProvider({ children }: { children: ReactNode }) {
     setDb((prev) => ({ ...prev, courses: (data ?? []).map(toCourse) }));
   }, []);
 
+  const accountRef = useRef<Account | null>(null);
+
   const applyUser = useCallback(
-    async (user: { id: string } | null) => {
+    async (user: { id: string } | null): Promise<Account | null> => {
       if (!user) {
         meRef.current = null;
+        accountRef.current = null;
         setMe(null);
         setDb((prev) => ({ ...prev, accounts: [], applications: [], interests: {}, tests: {}, notifications: [] }));
         setLoading(false);
-        return;
+        return null;
       }
-      if (meRef.current === user.id) return;
+      if (meRef.current === user.id) return accountRef.current;
       meRef.current = user.id;
       try {
         const acc = await ensureProfile();
         if (!acc.role) {
           await supabase.auth.signOut();
           meRef.current = null;
+          accountRef.current = null;
           setMe(null);
-          toast.error("บัญชี้นี้ยังไมไ่ດ้รบั การจัดสรรบทบาท กรุณาติดต่อเอเจนซี");
-          return;
+          toast.error("This account has no role yet — please contact MapleLeaf Education");
+          return null;
         }
-        setMe({ ...acc, role: acc.role });
+        const account: Account = {
+          id: acc.id,
+          firstname: acc.firstname,
+          lastname: acc.lastname,
+          email: acc.email,
+          org: acc.org,
+          role: acc.role,
+        };
+        accountRef.current = account;
+        setMe(account);
         await refresh();
+        return account;
       } catch (e) {
         meRef.current = null;
+        accountRef.current = null;
         setMe(null);
         toast.error(messageOf(e));
+        return null;
       } finally {
         setLoading(false);
       }
