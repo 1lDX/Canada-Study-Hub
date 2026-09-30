@@ -314,13 +314,13 @@ export const runApplicationAction = createServerFn({ method: "POST" })
           .eq("status", PAYMENT_AGENT_CHECKED);
         if (error) throw new Error(error.message);
         await setStatus(supabase, app, PREPARING, userId, LABEL.college);
-        await notify(supabase, app.id, app.student_id, "ຊຳລະເງິນຮຽບຮ້ອຍ", `${app.code} College → ${PREPARING}`);
-        await notify(supabase, app.id, app.agent_id, "College ຢືນຢັນການຊຳລະເງິນ", `${app.code} ${PREPARING}`);
+        await notify(supabase, app.id, app.student_id, "ชำระเงินเรียบร้อย", `${app.code} College ${PREPARING}`);
+        await notify(supabase, app.id, app.agent_id, "College ยืนยันการชำระเงิน", `${app.code} ${PREPARING}`);
         break;
       }
       case "complete": {
         await setStatus(supabase, app, COMPLETED, userId, LABEL.college);
-        await notify(supabase, app.id, app.student_id, "ຂັ້ນຕອນເສັດສິ້ນ", `${app.code} ${COMPLETED}`);
+        await notify(supabase, app.id, app.student_id, "ขั้นตอนเสร็จสิ้น", `${app.code} ${COMPLETED}`);
         await notify(supabase, app.id, app.agent_id, "Application เสร็จสิ้น", `${app.code} ปิดเคสเรียบร้อย`);
         break;
       }
