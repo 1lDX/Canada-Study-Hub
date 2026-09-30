@@ -46,7 +46,7 @@ export type Payment = {
   fileName: string;
   filePath: string;
   status: PaymentStatus;
-  note?: string;
+  note?: string | undefined;
 };
 
 export type Application = {
@@ -55,13 +55,15 @@ export type Application = {
   studentId: string;
   courseId: string;
   agentId: string;
-  collegeId?: string;
+  collegeId?: string | undefined;
   status: Status;
   submittedAt: string;
   docs: Doc[];
-  history: { status: Status | string; at: string; by: string; note?: string }[];
-  offer?: { fileName: string; filePath: string; at: string; sentToStudent?: boolean };
-  invoice?: { fileName: string; filePath: string; amount: number; dueDate: string; at: string; sentToStudent?: boolean };
+  history: { status: Status | string; at: string; by: string; note?: string | undefined }[];
+  offer?: { fileName: string; filePath: string; at: string; sentToStudent?: boolean | undefined } | undefined;
+  invoice?:
+    | { fileName: string; filePath: string; amount: number; dueDate: string; at: string; sentToStudent?: boolean | undefined }
+    | undefined;
   payments: Payment[];
 };
 
@@ -394,14 +396,11 @@ export function StoreProvider({ children }: { children: ReactNode }) {
         return applyUser(data.user);
       },
       register: async (a) => {
-        const { data, error } = await supabase.auth.signUp({
-          email: a.email.trim(),
-          password: a.password,
-          options: {
-            data: { firstname: a.firstname, lastname: a.lastname },
-            emailRedirectTo: typeof window === "undefined" ? undefined : window.location.origin,
-          },
-        });
+        const options = {
+          data: { firstname: a.firstname, lastname: a.lastname },
+          ...(typeof window === "undefined" ? {} : { emailRedirectTo: window.location.origin }),
+        };
+        const { data, error } = await supabase.auth.signUp({ email: a.email.trim(), password: a.password, options });
         if (error) return { ok: false, error: error.message };
         if (!data.session) {
           return { ok: true, needsConfirm: true };
@@ -486,7 +485,7 @@ export function StoreProvider({ children }: { children: ReactNode }) {
               doc_key: doc.key,
               file_name: doc.file.name,
               file_path: path,
-              uploaded_by: me?.id,
+              uploaded_by: me?.id ?? null,
             },
             { onConflict: "application_id,doc_key" },
           );
