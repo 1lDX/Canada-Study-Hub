@@ -1,9 +1,10 @@
 import { ALink } from "@/components/link";
+import { useStore } from "@/lib/store";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState } from "react";
 import { PublicLayout } from "@/components/layouts";
 import { Badge, Card, Field, SectionTitle, inputClass } from "@/components/ui-kit";
-import { CITIES, COURSES, COURSE_TYPES, FIELDS, money } from "@/lib/data";
+import { CITIES, COURSE_TYPES, FIELDS, money } from "@/lib/data";
 
 export const Route = createFileRoute("/courses/")({
   head: () => ({
@@ -18,6 +19,7 @@ export const Route = createFileRoute("/courses/")({
 });
 
 function CoursesPage() {
+  const COURSES = useStore().db.courses;
   const [city, setCity] = useState("");
   const [type, setType] = useState("");
   const [field, setField] = useState("");

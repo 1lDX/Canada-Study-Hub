@@ -1,9 +1,10 @@
 import { ALink } from "@/components/link";
+import { useStore } from "@/lib/store";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import hero from "@/assets/hero-canada.jpg";
 import { PublicLayout } from "@/components/layouts";
 import { Badge, Card, LinkButton, SectionTitle } from "@/components/ui-kit";
-import { COURSES, money } from "@/lib/data";
+import { money } from "@/lib/data";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -28,6 +29,7 @@ const steps = [
 ];
 
 function Home() {
+  const COURSES = useStore().db.courses;
   const featured = COURSES.slice(0, 3);
   return (
     <PublicLayout>
