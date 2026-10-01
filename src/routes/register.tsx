@@ -64,6 +64,7 @@ function RegisterPage() {
               </Field>
             </div>
             {error && <p className="text-sm text-destructive">{error}</p>}
+            {notice && <p className="text-sm text-primary">{notice}</p>}
             {!!f.confirm && f.confirm !== f.password && <p className="text-sm text-destructive">รหัสผ่านไม่ตรงกัน</p>}
             <Button className="w-full" disabled={!valid} onClick={submit}>
               สมัครสมาชิก
