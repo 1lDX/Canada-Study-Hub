@@ -27,9 +27,9 @@ export const Route = createFileRoute("/student/applications/$appId")({
 
 function AppDetail() {
   const { appId } = Route.useParams();
-  const { db, me, act, uploadDoc } = useStore();
+  const { db, me, act, uploadDoc, uploadAppFile } = useStore();
   const app = db.applications.find((a) => a.id === appId && a.studentId === me?.id);
-  const [pay, setPay] = useState({ amount: 0, paidDate: "", fileName: "" });
+  const [pay, setPay] = useState<{ amount: number; paidDate: string; file: File | null }>({ amount: 0, paidDate: "", file: null });
   const [payError, setPayError] = useState("");
 
   if (!app)
@@ -44,14 +44,21 @@ function AppDetail() {
   const invoice = app.invoice;
   const canPay = invoice?.sentToStudent && ["รอชำระเงิน"].includes(app.status);
 
-  const submitPay = () => {
+  const submitPay = async () => {
     if (!invoice) return;
     if (pay.amount !== invoice.amount) {
       setPayError(`ยอดเงินไม่ตรงกับ Invoice (ต้องชำระ ${money(invoice.amount)})`);
       return;
     }
     setPayError("");
-    act(app.id, "student_pay", pay);
+    if (!pay.file) return;
+    try {
+      const up = await uploadAppFile(app.id, "payments", `payment-${Date.now()}`, pay.file);
+      await act(app.id, "student_pay", { payment: { amount: pay.amount, paidDate: pay.paidDate, ...up } });
+      setPay({ amount: 0, paidDate: "", file: null });
+    } catch (e) {
+      setPayError(e instanceof Error ? e.message : "อัปโหลดไม่สำเร็จ");
+    }
   };
 
   return (
@@ -72,7 +79,7 @@ function AppDetail() {
               <Field key={d.key} label={d.label}>
                 <FileInput
                   value={app.docs.find((x) => x.key === d.key)?.fileName}
-                  onFile={(n) => uploadDoc(app.id, { key: d.key, fileName: n, uploadedAt: new Date().toISOString() })}
+                  onFile={(file) => void uploadDoc(app.id, { key: d.key, file })}
                 />
               </Field>
             ))}
@@ -119,11 +126,11 @@ function AppDetail() {
                 </div>
                 <div className="mt-3">
                   <Field label="หลักฐานการชำระเงิน">
-                    <FileInput onFile={(n) => setPay({ ...pay, fileName: n })} value={pay.fileName} />
+                    <FileInput onFile={(file) => setPay({ ...pay, file })} value={pay.file?.name} />
                   </Field>
                 </div>
                 {payError && <Badge tone="danger">{payError}</Badge>}
-                <Button className="mt-3" disabled={!pay.amount || !pay.paidDate || !pay.fileName} onClick={submitPay}>
+                <Button className="mt-3" disabled={!pay.amount || !pay.paidDate || !pay.file} onClick={submitPay}>
                   ส่งหลักฐานการชำระเงิน
                 </Button>
               </Card>

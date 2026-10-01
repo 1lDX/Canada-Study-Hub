@@ -3,8 +3,9 @@ import { useState } from "react";
 import { DashboardLayout, studentNav } from "@/components/layouts";
 import { Row } from "@/components/application-views";
 import { Badge, Button, Card, Empty, Field, FileInput, LinkButton } from "@/components/ui-kit";
-import { COURSES, DOC_TYPES, money } from "@/lib/data";
-import { useStore, type Doc } from "@/lib/store";
+import { DOC_TYPES, money } from "@/lib/data";
+import { extensionOf, uploadFile } from "@/lib/uploads";
+import { useStore } from "@/lib/store";
 
 export const Route = createFileRoute("/student/apply/$courseId")({
   head: () => ({
@@ -20,10 +21,11 @@ export const Route = createFileRoute("/student/apply/$courseId")({
 
 function ApplyPage() {
   const { courseId } = Route.useParams();
-  const { canApply, createApplication, myTest } = useStore();
+  const { db, me, busy, canApply, createApplication, myTest } = useStore();
   const navigate = useNavigate();
-  const course = COURSES.find((c) => c.id === courseId);
-  const [files, setFiles] = useState<Record<string, string>>({});
+  const course = db.courses.find((c) => c.id === courseId);
+  const [files, setFiles] = useState<Record<string, File>>({});
+  const [sending, setSending] = useState(false);
   const test = myTest();
 
   if (!course)
@@ -50,14 +52,22 @@ function ApplyPage() {
     );
 
   const missing = DOC_TYPES.filter((d) => d.required && !files[d.key]);
-  const submit = () => {
-    const docs: Doc[] = Object.entries(files).map(([key, fileName]) => ({
-      key,
-      fileName,
-      uploadedAt: new Date().toISOString(),
-    }));
-    const app = createApplication(course.id, docs);
-    navigate({ to: `/student/applications/${app.id}` as never });
+  const submit = async () => {
+    if (!me) return;
+    setSending(true);
+    try {
+      const docs = [];
+      for (const [key, file] of Object.entries(files)) {
+        const filePath = `${me.id}/staging/${key}.${extensionOf(file.name)}`;
+        await uploadFile("documents", filePath, file);
+        docs.push({ key, fileName: file.name, filePath });
+      }
+      const app = await createApplication(course.id, docs);
+      if (app) navigate({ to: `/student/applications/${app.id}` as never });
+      else navigate({ to: "/student/applications" as never });
+    } finally {
+      setSending(false);
+    }
   };
 
   return (
@@ -71,7 +81,7 @@ function ApplyPage() {
           <div className="mt-4 space-y-4">
             {DOC_TYPES.map((d) => (
               <Field key={d.key} label={`${d.label}${d.required ? " *" : " (ไม่บังคับ)"}`}>
-                <FileInput onFile={(n) => setFiles((p) => ({ ...p, [d.key]: n }))} value={files[d.key]} />
+                <FileInput onFile={(file) => setFiles((p) => ({ ...p, [d.key]: file }))} value={files[d.key]?.name} />
               </Field>
             ))}
           </div>
@@ -102,8 +112,8 @@ function ApplyPage() {
             ) : (
               <Badge tone="success">เอกสารครบถ้วน พร้อมส่งใบสมัคร</Badge>
             )}
-            <Button className="mt-4 w-full" disabled={missing.length > 0} onClick={submit}>
-              Submit Application
+            <Button className="mt-4 w-full" disabled={missing.length > 0 || sending || busy} onClick={submit}>
+              {sending ? "กำลังส่ง..." : "Submit Application"}
             </Button>
             <p className="mt-2 text-xs text-muted-foreground">
               เมื่อส่งแล้ว ระบบจะบันทึกวันเวลาและแจ้งเตือน Agent ให้ตรวจสอบทันที

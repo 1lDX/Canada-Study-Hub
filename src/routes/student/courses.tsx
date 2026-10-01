@@ -3,7 +3,7 @@ import { useState } from "react";
 import { ALink } from "@/components/link";
 import { DashboardLayout, studentNav } from "@/components/layouts";
 import { Badge, Card, Empty, LinkButton, SectionTitle } from "@/components/ui-kit";
-import { COURSES, meetsLevel, money } from "@/lib/data";
+import { meetsLevel, money } from "@/lib/data";
 import { useStore } from "@/lib/store";
 
 export const Route = createFileRoute("/student/courses")({
@@ -19,6 +19,7 @@ export const Route = createFileRoute("/student/courses")({
 });
 
 function StudentCourses() {
+  const COURSES = useStore().db.courses;
   const { myInterests, myTest } = useStore();
   const i = myInterests();
   const test = myTest();

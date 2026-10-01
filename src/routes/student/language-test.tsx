@@ -28,6 +28,7 @@ function LanguageTestPage() {
     expiryDate: cur?.expiryDate ?? "",
     fileName: cur?.fileName ?? "",
   });
+  const [file, setFile] = useState<File | null>(null);
   const [saved, setSaved] = useState(false);
   const set = (k: string, v: string) => setF({ ...f, [k]: v });
   const valid = f.testType && f.score && f.level && f.testDate && f.fileName;
@@ -71,14 +72,14 @@ function LanguageTestPage() {
         </div>
         <div className="mt-3">
           <Field label="อัปโหลดผลสอบ" hint="PDF หรือรูปภาพ ไม่เกิน 8 MB">
-            <FileInput onFile={(n) => set("fileName", n)} value={f.fileName} />
+            <FileInput onFile={(file) => { setFile(file); set("fileName", file.name); }} value={f.fileName} />
           </Field>
         </div>
         <div className="mt-4 flex items-center gap-3">
           <Button
             disabled={!valid}
-            onClick={() => {
-              saveTest(f.expiryDate ? f : { ...f, expiryDate: undefined });
+            onClick={async () => {
+              await saveTest({ testType: f.testType, score: f.score, level: f.level, testDate: f.testDate, expiryDate: f.expiryDate || undefined, file });
               setSaved(true);
             }}
           >

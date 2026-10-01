@@ -1,7 +1,8 @@
+import { useStore } from "@/lib/store";
 import { createFileRoute } from "@tanstack/react-router";
 import { ALink } from "@/components/link";
 import { DashboardLayout, studentNav } from "@/components/layouts";
-import { OfferInvoiceCard, courseOf, useScopedApps } from "@/components/application-views";
+import { OfferInvoiceCard, useScopedApps } from "@/components/application-views";
 import { Card, Empty, SectionTitle } from "@/components/ui-kit";
 
 export const Route = createFileRoute("/student/offers")({
@@ -17,6 +18,8 @@ export const Route = createFileRoute("/student/offers")({
 });
 
 function StudentOffers() {
+  const { db: storeDb } = useStore();
+  const courseOf = (id: string) => storeDb.courses.find((c) => c.id === id);
   const apps = useScopedApps("student").filter((a) => a.offer?.sentToStudent || a.invoice?.sentToStudent);
   return (
     <DashboardLayout nav={studentNav} title="Offer & Invoice">

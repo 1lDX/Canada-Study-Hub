@@ -1,7 +1,8 @@
+import { useStore } from "@/lib/store";
 import { createFileRoute } from "@tanstack/react-router";
 import { ALink } from "@/components/link";
 import { DashboardLayout, studentNav } from "@/components/layouts";
-import { courseOf, useScopedApps } from "@/components/application-views";
+import { useScopedApps } from "@/components/application-views";
 import { Empty, SectionTitle, StatusBadge, Table } from "@/components/ui-kit";
 import { money } from "@/lib/data";
 
@@ -18,6 +19,8 @@ export const Route = createFileRoute("/student/payments")({
 });
 
 function StudentPayments() {
+  const { db: storeDb } = useStore();
+  const courseOf = (id: string) => storeDb.courses.find((c) => c.id === id);
   const apps = useScopedApps("student");
   const rows = apps.flatMap((a) => a.payments.map((p) => ({ app: a, p })));
   return (

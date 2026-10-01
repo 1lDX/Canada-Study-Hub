@@ -3,7 +3,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { PublicLayout } from "@/components/layouts";
 import { Row } from "@/components/application-views";
 import { Badge, Card, Empty, SectionTitle } from "@/components/ui-kit";
-import { COURSES, money } from "@/lib/data";
+import { money } from "@/lib/data";
 import { useStore } from "@/lib/store";
 
 export const Route = createFileRoute("/courses/$courseId")({
@@ -19,6 +19,7 @@ export const Route = createFileRoute("/courses/$courseId")({
 });
 
 function CourseDetail() {
+  const COURSES = useStore().db.courses;
   const { courseId } = Route.useParams();
   const { me, myTest, canApply } = useStore();
   const course = COURSES.find((c) => c.id === courseId);

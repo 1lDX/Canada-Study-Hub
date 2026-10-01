@@ -29,8 +29,8 @@ function LoginPage() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
 
-  const submit = () => {
-    const acc = login(email.trim(), password);
+  const submit = async () => {
+    const acc = await login(email.trim(), password);
     if (!acc) return setError("อีเมลหรือรหัสผ่านไม่ถูกต้อง");
     navigate({ to: `/${acc.role}/dashboard` as never });
   };

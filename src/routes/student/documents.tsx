@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { ALink } from "@/components/link";
 import { DashboardLayout, studentNav } from "@/components/layouts";
-import { courseOf, useScopedApps } from "@/components/application-views";
+import { useScopedApps } from "@/components/application-views";
 import { Badge, Card, Empty, FileInput, SectionTitle } from "@/components/ui-kit";
 import { DOC_TYPES } from "@/lib/data";
 import { missingDocs, useStore } from "@/lib/store";
@@ -19,6 +19,8 @@ export const Route = createFileRoute("/student/documents")({
 });
 
 function StudentDocuments() {
+  const { db: storeDb } = useStore();
+  const courseOf = (id: string) => storeDb.courses.find((c) => c.id === id);
   const apps = useScopedApps("student");
   const { uploadDoc } = useStore();
 
@@ -49,7 +51,7 @@ function StudentDocuments() {
                     </p>
                     <FileInput
                       value={app.docs.find((x) => x.key === d.key)?.fileName}
-                      onFile={(n) => uploadDoc(app.id, { key: d.key, fileName: n, uploadedAt: new Date().toISOString() })}
+                      onFile={(file) => void uploadDoc(app.id, { key: d.key, file })}
                     />
                   </div>
                 ))}

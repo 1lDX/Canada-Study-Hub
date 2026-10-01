@@ -3,7 +3,7 @@ import { ALink } from "@/components/link";
 import { DashboardLayout, studentNav } from "@/components/layouts";
 import { ApplicationsTable, NotificationsView, Row, useScopedApps } from "@/components/application-views";
 import { Badge, Card, Empty, LinkButton, SectionTitle, Stat } from "@/components/ui-kit";
-import { COURSES, meetsLevel, money } from "@/lib/data";
+import { meetsLevel, money } from "@/lib/data";
 import { useStore } from "@/lib/store";
 
 export const Route = createFileRoute("/student/dashboard")({
@@ -19,6 +19,7 @@ export const Route = createFileRoute("/student/dashboard")({
 });
 
 function StudentDashboard() {
+  const COURSES = useStore().db.courses;
   const { me, myTest, myInterests, unread } = useStore();
   const apps = useScopedApps("student");
   const test = myTest();
