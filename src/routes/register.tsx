@@ -26,9 +26,14 @@ function RegisterPage() {
   const emailOk = /^\S+@\S+\.\S+$/.test(f.email);
   const valid = f.firstname.trim() && f.lastname.trim() && emailOk && f.password.length >= 6 && f.password === f.confirm;
 
-  const submit = () => {
-    const res = register({ firstname: f.firstname.trim(), lastname: f.lastname.trim(), email: f.email.trim(), password: f.password });
+  const [notice, setNotice] = useState("");
+  const submit = async () => {
+    const res = await register({ firstname: f.firstname.trim(), lastname: f.lastname.trim(), email: f.email.trim(), password: f.password });
     if (!res.ok) return setError(res.error ?? "สมัครไม่สำเร็จ");
+    if (res.needsConfirm) {
+      setError("");
+      return setNotice("สมัครสำเร็จ! กรุณายืนยันอีเมลจากลิงก์ที่ส่งไปที่กล่องจดหมาย แล้วจึงเข้าสู่ระบบ");
+    }
     navigate({ to: "/student/dashboard" as never });
   };
 
