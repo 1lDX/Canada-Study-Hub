@@ -22,11 +22,14 @@ import { Route as AgentDocumentsRouteImport } from './routes/agent/documents'
 import { Route as AgentNotificationsRouteImport } from './routes/agent/notifications'
 import { Route as AgentOffersRouteImport } from './routes/agent/offers'
 import { Route as AgentPaymentsRouteImport } from './routes/agent/payments'
+import { Route as AgentProfileRouteImport } from './routes/agent/profile'
+import { Route as CollegeCoursesRouteImport } from './routes/college/courses'
 import { Route as CollegeDashboardRouteImport } from './routes/college/dashboard'
 import { Route as CollegeDocumentsRouteImport } from './routes/college/documents'
 import { Route as CollegeNotificationsRouteImport } from './routes/college/notifications'
 import { Route as CollegeOffersRouteImport } from './routes/college/offers'
 import { Route as CollegePaymentsRouteImport } from './routes/college/payments'
+import { Route as CollegeProfileRouteImport } from './routes/college/profile'
 import { Route as CoursesIndexRouteImport } from './routes/courses/index'
 import { Route as CoursesCourseIdRouteImport } from './routes/courses/$courseId'
 import { Route as StudentCoursesRouteImport } from './routes/student/courses'
@@ -111,6 +114,16 @@ const AgentPaymentsRoute = AgentPaymentsRouteImport.update({
   path: '/payments',
   getParentRoute: () => AgentRouteRoute,
 } as any)
+const AgentProfileRoute = AgentProfileRouteImport.update({
+  id: '/profile',
+  path: '/profile',
+  getParentRoute: () => AgentRouteRoute,
+} as any)
+const CollegeCoursesRoute = CollegeCoursesRouteImport.update({
+  id: '/courses',
+  path: '/courses',
+  getParentRoute: () => CollegeRouteRoute,
+} as any)
 const CollegeDashboardRoute = CollegeDashboardRouteImport.update({
   id: '/dashboard',
   path: '/dashboard',
@@ -134,6 +147,11 @@ const CollegeOffersRoute = CollegeOffersRouteImport.update({
 const CollegePaymentsRoute = CollegePaymentsRouteImport.update({
   id: '/payments',
   path: '/payments',
+  getParentRoute: () => CollegeRouteRoute,
+} as any)
+const CollegeProfileRoute = CollegeProfileRouteImport.update({
+  id: '/profile',
+  path: '/profile',
   getParentRoute: () => CollegeRouteRoute,
 } as any)
 const CoursesIndexRoute = CoursesIndexRouteImport.update({
@@ -245,11 +263,14 @@ export interface FileRoutesByFullPath {
   '/agent/notifications': typeof AgentNotificationsRoute
   '/agent/offers': typeof AgentOffersRoute
   '/agent/payments': typeof AgentPaymentsRoute
+  '/agent/profile': typeof AgentProfileRoute
+  '/college/courses': typeof CollegeCoursesRoute
   '/college/dashboard': typeof CollegeDashboardRoute
   '/college/documents': typeof CollegeDocumentsRoute
   '/college/notifications': typeof CollegeNotificationsRoute
   '/college/offers': typeof CollegeOffersRoute
   '/college/payments': typeof CollegePaymentsRoute
+  '/college/profile': typeof CollegeProfileRoute
   '/courses/$courseId': typeof CoursesCourseIdRoute
   '/student/courses': typeof StudentCoursesRoute
   '/student/dashboard': typeof StudentDashboardRoute
@@ -283,11 +304,14 @@ export interface FileRoutesByTo {
   '/agent/notifications': typeof AgentNotificationsRoute
   '/agent/offers': typeof AgentOffersRoute
   '/agent/payments': typeof AgentPaymentsRoute
+  '/agent/profile': typeof AgentProfileRoute
+  '/college/courses': typeof CollegeCoursesRoute
   '/college/dashboard': typeof CollegeDashboardRoute
   '/college/documents': typeof CollegeDocumentsRoute
   '/college/notifications': typeof CollegeNotificationsRoute
   '/college/offers': typeof CollegeOffersRoute
   '/college/payments': typeof CollegePaymentsRoute
+  '/college/profile': typeof CollegeProfileRoute
   '/courses/$courseId': typeof CoursesCourseIdRoute
   '/student/courses': typeof StudentCoursesRoute
   '/student/dashboard': typeof StudentDashboardRoute
@@ -322,11 +346,14 @@ export interface FileRoutesById {
   '/agent/notifications': typeof AgentNotificationsRoute
   '/agent/offers': typeof AgentOffersRoute
   '/agent/payments': typeof AgentPaymentsRoute
+  '/agent/profile': typeof AgentProfileRoute
+  '/college/courses': typeof CollegeCoursesRoute
   '/college/dashboard': typeof CollegeDashboardRoute
   '/college/documents': typeof CollegeDocumentsRoute
   '/college/notifications': typeof CollegeNotificationsRoute
   '/college/offers': typeof CollegeOffersRoute
   '/college/payments': typeof CollegePaymentsRoute
+  '/college/profile': typeof CollegeProfileRoute
   '/courses/$courseId': typeof CoursesCourseIdRoute
   '/student/courses': typeof StudentCoursesRoute
   '/student/dashboard': typeof StudentDashboardRoute
@@ -362,11 +389,14 @@ export interface FileRouteTypes {
     | '/agent/notifications'
     | '/agent/offers'
     | '/agent/payments'
+    | '/agent/profile'
+    | '/college/courses'
     | '/college/dashboard'
     | '/college/documents'
     | '/college/notifications'
     | '/college/offers'
     | '/college/payments'
+    | '/college/profile'
     | '/courses/$courseId'
     | '/student/courses'
     | '/student/dashboard'
@@ -400,11 +430,14 @@ export interface FileRouteTypes {
     | '/agent/notifications'
     | '/agent/offers'
     | '/agent/payments'
+    | '/agent/profile'
+    | '/college/courses'
     | '/college/dashboard'
     | '/college/documents'
     | '/college/notifications'
     | '/college/offers'
     | '/college/payments'
+    | '/college/profile'
     | '/courses/$courseId'
     | '/student/courses'
     | '/student/dashboard'
@@ -438,11 +471,14 @@ export interface FileRouteTypes {
     | '/agent/notifications'
     | '/agent/offers'
     | '/agent/payments'
+    | '/agent/profile'
+    | '/college/courses'
     | '/college/dashboard'
     | '/college/documents'
     | '/college/notifications'
     | '/college/offers'
     | '/college/payments'
+    | '/college/profile'
     | '/courses/$courseId'
     | '/student/courses'
     | '/student/dashboard'
@@ -569,6 +605,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AgentPaymentsRouteImport
       parentRoute: typeof AgentRouteRoute
     }
+    '/agent/profile': {
+      id: '/agent/profile'
+      path: '/profile'
+      fullPath: '/agent/profile'
+      preLoaderRoute: typeof AgentProfileRouteImport
+      parentRoute: typeof AgentRouteRoute
+    }
+    '/college/courses': {
+      id: '/college/courses'
+      path: '/courses'
+      fullPath: '/college/courses'
+      preLoaderRoute: typeof CollegeCoursesRouteImport
+      parentRoute: typeof CollegeRouteRoute
+    }
     '/college/dashboard': {
       id: '/college/dashboard'
       path: '/dashboard'
@@ -602,6 +652,13 @@ declare module '@tanstack/react-router' {
       path: '/payments'
       fullPath: '/college/payments'
       preLoaderRoute: typeof CollegePaymentsRouteImport
+      parentRoute: typeof CollegeRouteRoute
+    }
+    '/college/profile': {
+      id: '/college/profile'
+      path: '/profile'
+      fullPath: '/college/profile'
+      preLoaderRoute: typeof CollegeProfileRouteImport
       parentRoute: typeof CollegeRouteRoute
     }
     '/courses/': {
@@ -739,6 +796,7 @@ interface AgentRouteRouteChildren {
   AgentNotificationsRoute: typeof AgentNotificationsRoute
   AgentOffersRoute: typeof AgentOffersRoute
   AgentPaymentsRoute: typeof AgentPaymentsRoute
+  AgentProfileRoute: typeof AgentProfileRoute
   AgentApplicationsAppIdRoute: typeof AgentApplicationsAppIdRoute
   AgentApplicationsIndexRoute: typeof AgentApplicationsIndexRoute
 }
@@ -749,6 +807,7 @@ const AgentRouteRouteChildren: AgentRouteRouteChildren = {
   AgentNotificationsRoute: AgentNotificationsRoute,
   AgentOffersRoute: AgentOffersRoute,
   AgentPaymentsRoute: AgentPaymentsRoute,
+  AgentProfileRoute: AgentProfileRoute,
   AgentApplicationsAppIdRoute: AgentApplicationsAppIdRoute,
   AgentApplicationsIndexRoute: AgentApplicationsIndexRoute,
 }
@@ -758,21 +817,25 @@ const AgentRouteRouteWithChildren = AgentRouteRoute._addFileChildren(
 )
 
 interface CollegeRouteRouteChildren {
+  CollegeCoursesRoute: typeof CollegeCoursesRoute
   CollegeDashboardRoute: typeof CollegeDashboardRoute
   CollegeDocumentsRoute: typeof CollegeDocumentsRoute
   CollegeNotificationsRoute: typeof CollegeNotificationsRoute
   CollegeOffersRoute: typeof CollegeOffersRoute
   CollegePaymentsRoute: typeof CollegePaymentsRoute
+  CollegeProfileRoute: typeof CollegeProfileRoute
   CollegeApplicationsAppIdRoute: typeof CollegeApplicationsAppIdRoute
   CollegeApplicationsIndexRoute: typeof CollegeApplicationsIndexRoute
 }
 
 const CollegeRouteRouteChildren: CollegeRouteRouteChildren = {
+  CollegeCoursesRoute: CollegeCoursesRoute,
   CollegeDashboardRoute: CollegeDashboardRoute,
   CollegeDocumentsRoute: CollegeDocumentsRoute,
   CollegeNotificationsRoute: CollegeNotificationsRoute,
   CollegeOffersRoute: CollegeOffersRoute,
   CollegePaymentsRoute: CollegePaymentsRoute,
+  CollegeProfileRoute: CollegeProfileRoute,
   CollegeApplicationsAppIdRoute: CollegeApplicationsAppIdRoute,
   CollegeApplicationsIndexRoute: CollegeApplicationsIndexRoute,
 }

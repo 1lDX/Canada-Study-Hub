@@ -159,15 +159,18 @@ export const agentNav = [
   { to: "/agent/offers", label: "Offers & Invoices" },
   { to: "/agent/payments", label: "Payments" },
   { to: "/agent/notifications", label: "Notifications" },
+  { to: "/agent/profile", label: "Profile" },
 ];
 
 export const collegeNav = [
   { to: "/college/dashboard", label: "Dashboard" },
   { to: "/college/applications", label: "Applications" },
+  { to: "/college/courses", label: "Courses" },
   { to: "/college/documents", label: "Documents" },
   { to: "/college/offers", label: "Offers & Invoices" },
   { to: "/college/payments", label: "Payments" },
   { to: "/college/notifications", label: "Notifications" },
+  { to: "/college/profile", label: "Profile" },
 ];
 
 export function DashboardLayout({

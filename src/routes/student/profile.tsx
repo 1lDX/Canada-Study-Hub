@@ -1,5 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { DashboardLayout, studentNav } from "@/components/layouts";
+import { ChangePasswordCard, EditProfileCard } from "@/components/account-settings";
 import { Row } from "@/components/application-views";
 import { Card, LinkButton } from "@/components/ui-kit";
 import { money } from "@/lib/data";
@@ -71,6 +72,10 @@ function Profile() {
             จัดการผลสอบภาษา
           </LinkButton>
         </Card>
+      </div>
+      <div className="mt-4 grid gap-4 lg:grid-cols-2">
+        <EditProfileCard />
+        <ChangePasswordCard />
       </div>
     </DashboardLayout>
   );

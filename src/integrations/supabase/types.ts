@@ -246,6 +246,7 @@ export type Database = {
       courses: {
         Row: {
           city: string
+          college_id: string | null
           college_name: string
           course_name: string
           course_type: string
@@ -261,6 +262,7 @@ export type Database = {
         }
         Insert: {
           city: string
+          college_id?: string | null
           college_name: string
           course_name: string
           course_type: string
@@ -276,6 +278,7 @@ export type Database = {
         }
         Update: {
           city?: string
+          college_id?: string | null
           college_name?: string
           course_name?: string
           course_type?: string
@@ -289,7 +292,15 @@ export type Database = {
           language_level?: string
           tuition?: number
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "courses_college_id_fkey"
+            columns: ["college_id"]
+            isOneToOne: false
+            referencedRelation: "colleges"
+            referencedColumns: ["account_id"]
+          },
+        ]
       }
       invoices: {
         Row: {
