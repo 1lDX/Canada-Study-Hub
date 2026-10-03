@@ -38,7 +38,7 @@ function ManageCourses() {
   const load = useCallback(async () => {
     if (!me) return;
     const { data, error } = await supabase.from("courses").select("*").eq("college_id", me.id).order("course_name");
-    if (error) return toast.error(error.message);
+    if (error) { toast.error(error.message); return; }
     setRows((data ?? []) as unknown as Row[]);
   }, [me]);
   useEffect(() => { void load(); }, [load]);
@@ -48,8 +48,8 @@ function ManageCourses() {
 
   const save = async () => {
     if (!edit) return;
-    if (!edit.course_name.trim() || !edit.college_name.trim()) return toast.error("กรุณากรอกชื่อคอร์สและชื่อ College");
-    if (!(edit.tuition >= 0)) return toast.error("ค่าเรียนไม่ถูกต้อง");
+    if (!edit.course_name.trim() || !edit.college_name.trim()) { toast.error("กรุณากรอกชื่อคอร์สและชื่อ College"); return; }
+    if (!(edit.tuition >= 0)) { toast.error("ค่าเรียนไม่ถูกต้อง"); return; }
     setSaving(true);
     const payload = {
       course_name: edit.course_name.trim(), college_name: edit.college_name.trim(), city: edit.city,
@@ -61,7 +61,7 @@ function ManageCourses() {
       ? await supabase.from("courses").update(payload).eq("id", edit.id)
       : await supabase.from("courses").insert({ ...payload, id: `C-${crypto.randomUUID().slice(0, 8)}` });
     setSaving(false);
-    if (error) return toast.error(error.message);
+    if (error) { toast.error(error.message); return; }
     toast.success(edit.id ? "แก้ไขคอร์สแล้ว" : "เพิ่มคอร์สแล้ว");
     setEdit(null);
     void load();
@@ -70,7 +70,7 @@ function ManageCourses() {
   const toggle = async (r: Row) => {
     if (r.is_active && !confirm(`ปิดคอร์ส "${r.course_name}"? นักเรียนจะไม่เห็นคอร์สนี้อีก (ใบสมัครเดิมยังอยู่)`)) return;
     const { error } = await supabase.from("courses").update({ is_active: !r.is_active }).eq("id", r.id);
-    if (error) return toast.error(error.message);
+    if (error) { toast.error(error.message); return; }
     void load();
   };
 

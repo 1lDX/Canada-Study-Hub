@@ -10,14 +10,14 @@ export function EditProfileCard() {
   const [saving, setSaving] = useState(false);
   if (!me) return null;
   const save = async () => {
-    if (!f.firstname.trim() || !f.lastname.trim()) return toast.error("กรุณากรอกชื่อและนามสกุล");
+    if (!f.firstname.trim() || !f.lastname.trim()) { toast.error("กรุณากรอกชื่อและนามสกุล"); return; }
     setSaving(true);
     const { error } = await supabase
       .from("profiles")
       .update({ firstname: f.firstname.trim().slice(0, 100), lastname: f.lastname.trim().slice(0, 100), org: f.org.trim().slice(0, 150) || null })
       .eq("id", me.id);
     setSaving(false);
-    if (error) return toast.error(error.message);
+    if (error) { toast.error(error.message); return; }
     toast.success("บันทึกข้อมูลแล้ว");
     setTimeout(() => window.location.reload(), 600);
   };
@@ -43,19 +43,19 @@ export function ChangePasswordCard() {
   const [saving, setSaving] = useState(false);
   if (!me) return null;
   const save = async () => {
-    if (!f.current) return toast.error("กรุณากรอกรหัสผ่านเดิม");
-    if (f.next.length < 8) return toast.error("รหัสผ่านใหม่ต้องมีอย่างน้อย 8 ตัวอักษร");
-    if (f.next !== f.confirm) return toast.error("รหัสผ่านใหม่และการยืนยันไม่ตรงกัน");
-    if (f.next === f.current) return toast.error("รหัสผ่านใหม่ต้องไม่ซ้ำกับรหัสเดิม");
+    if (!f.current) { toast.error("กรุณากรอกรหัสผ่านเดิม"); return; }
+    if (f.next.length < 8) { toast.error("รหัสผ่านใหม่ต้องมีอย่างน้อย 8 ตัวอักษร"); return; }
+    if (f.next !== f.confirm) { toast.error("รหัสผ่านใหม่และการยืนยันไม่ตรงกัน"); return; }
+    if (f.next === f.current) { toast.error("รหัสผ่านใหม่ต้องไม่ซ้ำกับรหัสเดิม"); return; }
     setSaving(true);
     const check = await supabase.auth.signInWithPassword({ email: me.email, password: f.current });
     if (check.error) {
       setSaving(false);
-      return toast.error("รหัสผ่านเดิมไม่ถูกต้อง");
+      { toast.error("รหัสผ่านเดิมไม่ถูกต้อง"); return; }
     }
     const { error } = await supabase.auth.updateUser({ password: f.next });
     setSaving(false);
-    if (error) return toast.error(error.message);
+    if (error) { toast.error(error.message); return; }
     setF({ current: "", next: "", confirm: "" });
     toast.success("เปลี่ยนรหัสผ่านเรียบร้อย");
   };
