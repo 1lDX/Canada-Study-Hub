@@ -299,6 +299,10 @@ export function StoreProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const accountRef = useRef<Account | null>(null);
+  // Shared in-flight profile load so concurrent applyUser calls (login +
+  // onAuthStateChange SIGNED_IN) resolve to the same account instead of the
+  // second call returning a stale null and breaking the login flow.
+  const profileInflightRef = useRef<Promise<Account | null> | null>(null);
 
   const applyUser = useCallback(
     async (user: { id: string } | null): Promise<Account | null> => {
@@ -311,37 +315,46 @@ export function StoreProvider({ children }: { children: ReactNode }) {
         return null;
       }
       if (meRef.current === user.id) return accountRef.current;
-      meRef.current = user.id;
-      try {
-        const acc = await ensureProfile();
-        if (!acc.role) {
-          await supabase.auth.signOut();
+      if (profileInflightRef.current) return profileInflightRef.current;
+      const load = (async (): Promise<Account | null> => {
+        meRef.current = user.id;
+        try {
+          const acc = await ensureProfile();
+          if (!acc.role) {
+            await supabase.auth.signOut();
+            meRef.current = null;
+            accountRef.current = null;
+            setMe(null);
+            toast.error("This account has no role yet — please contact MapleLeaf Education");
+            return null;
+          }
+          const account: Account = {
+            id: acc.id,
+            firstname: acc.firstname,
+            lastname: acc.lastname,
+            email: acc.email,
+            org: acc.org,
+            role: acc.role,
+          };
+          accountRef.current = account;
+          setMe(account);
+          await refresh();
+          return account;
+        } catch (e) {
           meRef.current = null;
           accountRef.current = null;
           setMe(null);
-          toast.error("This account has no role yet — please contact MapleLeaf Education");
+          toast.error(messageOf(e));
           return null;
+        } finally {
+          setLoading(false);
         }
-        const account: Account = {
-          id: acc.id,
-          firstname: acc.firstname,
-          lastname: acc.lastname,
-          email: acc.email,
-          org: acc.org,
-          role: acc.role,
-        };
-        accountRef.current = account;
-        setMe(account);
-        await refresh();
-        return account;
-      } catch (e) {
-        meRef.current = null;
-        accountRef.current = null;
-        setMe(null);
-        toast.error(messageOf(e));
-        return null;
+      })();
+      profileInflightRef.current = load;
+      try {
+        return await load;
       } finally {
-        setLoading(false);
+        profileInflightRef.current = null;
       }
     },
     [refresh],
