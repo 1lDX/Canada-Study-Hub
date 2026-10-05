@@ -60,7 +60,7 @@ function LoginPage() {
             </p>
           </div>
           <div className="mt-6 rounded-lg bg-surface p-3">
-            <p className="text-xs font-medium">บัญชีทดลอง (รหัสผ่าน 123456)</p>
+            <p className="text-xs font-medium">บัญชีทดลอง (รหัสผ่าน MapleDemo#2026)</p>
             <div className="mt-2 flex flex-wrap gap-2">
               {demos.map(([em, label]) => (
                 <Button
@@ -69,7 +69,7 @@ function LoginPage() {
                   variant="outline"
                   onClick={() => {
                     setEmail(em);
-                    setPassword("123456");
+                    setPassword("MapleDemo#2026");
                   }}
                 >
                   {label}
