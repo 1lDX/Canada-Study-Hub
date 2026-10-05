@@ -314,9 +314,10 @@ export function StoreProvider({ children }: { children: ReactNode }) {
         setLoading(false);
         return null;
       }
-      if (meRef.current === user.id) return accountRef.current;
       if (profileInflightRef.current) return profileInflightRef.current;
-      const load = (async (): Promise<Account | null> => {
+      if (meRef.current === user.id && accountRef.current) return accountRef.current;
+      let load!: Promise<Account | null>;
+      load = (async (): Promise<Account | null> => {
         meRef.current = user.id;
         try {
           const acc = await ensureProfile();
