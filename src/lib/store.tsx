@@ -351,6 +351,7 @@ export function StoreProvider({ children }: { children: ReactNode }) {
           setLoading(false);
         }
       })();
+      profileInflightRef.current = load;
       try {
         return await load;
       } finally {
