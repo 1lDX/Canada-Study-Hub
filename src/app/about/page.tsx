@@ -1,0 +1,2 @@
+import { Footer, PublicNav } from "@/components/public-nav";
+export default function About(){return <><PublicNav/><main className="section"><div className="container" style={{maxWidth:780}}><div className="eyebrow">About MapleLeaf</div><h1>คำแนะนำที่โปร่งใส ตั้งแต่เลือก Course ถึงวันเข้าเรียน</h1><p className="muted">MapleLeaf Education เชื่อม Student, Agent และ College ไว้ในกระบวนการเดียว ลดเอกสารตกหล่นและทำให้ทุกฝ่ายเห็นขั้นตอนที่เกี่ยวข้องกับตนเองอย่างชัดเจน</p></div></main><Footer/></>}

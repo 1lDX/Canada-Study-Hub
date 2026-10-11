@@ -1,0 +1,2 @@
+import { Footer, PublicNav } from "@/components/public-nav";
+export default function Contact(){return <><PublicNav/><main className="section"><div className="container" style={{maxWidth:700}}><div className="eyebrow">Contact</div><h1>คุยกับทีม MapleLeaf</h1><div className="card"><p><b>Email</b><br/>hello@mapleleaf.education</p><p><b>เวลาทำการ</b><br/>จันทร์–ศุกร์ 09:00–18:00 น.</p><p className="muted">หน้านี้เป็นข้อมูลตัวอย่างสำหรับ Pilot</p></div></div></main><Footer/></>}
